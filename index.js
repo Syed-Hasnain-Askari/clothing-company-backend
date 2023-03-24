@@ -12,6 +12,9 @@ mongoose.connect('mongodb://' + config.mongo.uri + ':27017/' + config.mongo.db)
     //Enable CORS policy
     app.use(cors());
     app.options('*', cors());
+    app.use(cors());
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.json());
     var server = http
       .createServer(app)
       .listen(
