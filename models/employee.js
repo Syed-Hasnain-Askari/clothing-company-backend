@@ -19,5 +19,4 @@ var employee = new mongoose.Schema({
     required: true
   }
 });
-
 module.exports = new mongoose.model('employee', employee);

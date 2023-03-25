@@ -1,13 +1,14 @@
 var csv = require('csvtojson');
-const multer = require('multer');
-const csvFilePath = `${__dirname}/uploads/usernamefile.csv`;
+const csvFilePath = `${__dirname}/../uploads/usernamefile.csv`;
 const employeeProducts = require('../models/employeeProducts');
 const employee = require('../models/employee');
+const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
-const uploadCSV = upload.single('file', (req, res, next) => {
-      csv()
+const uploadCSV = (req, res) => {
+       csv()
       .fromFile(csvFilePath)
       .then((jsonObj) => {
+        console.log(jsonObj)
         // Create an array to hold user data
         const products = [];
         // Create an array to hold employee data
@@ -88,12 +89,13 @@ const uploadCSV = upload.single('file', (req, res, next) => {
           });
       })
       .catch((error) => {
+        console.log(error)
         res.status(500).send({
           message: "failure",
           error
         });
       })
-  });
+};
 module.exports = {
-    uploadCSV
+  uploadCSV
 }

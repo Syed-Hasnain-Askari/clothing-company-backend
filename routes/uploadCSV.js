@@ -1,5 +1,7 @@
 const express = require("express");
-const upload = require('../controller/uploadCSV');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+const uploadcsv = require('../controller/uploadCSV');
 const router = express.Router();
-router.post("/uploadcsv",upload.uploadCSV);
+router.post('/upload-file', upload.single('file'), uploadcsv.uploadCSV);
 module.exports = router
