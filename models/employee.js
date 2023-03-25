@@ -9,6 +9,10 @@ var employee = new mongoose.Schema({
     type: String,
     required: true
   },
+  employeePassword: {
+    type: String,
+    required: true
+  },
   gender: {
     type: String,
     enum: ['M', 'F'],

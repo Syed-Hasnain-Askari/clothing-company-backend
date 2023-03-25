@@ -4,6 +4,16 @@ const employeeProducts = require('../models/employeeProducts');
 const employee = require('../models/employee');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
+function generatePassword() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const length = Math.floor(Math.random() * 5) + 8; // Random length between 8 and 12
+  let password = '';
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    password += chars.charAt(randomIndex);
+  }
+  return password;
+}
 const uploadCSV = (req, res) => {
        csv()
       .fromFile(csvFilePath)
@@ -52,6 +62,8 @@ const uploadCSV = (req, res) => {
               const empForProduct = [];
   
               for (var i = 0; i < jsonObj.length; i++) {
+                const generatedPassword = generatePassword();
+                console.log(generatedPassword)
                 if (jsonObj[i]['companyName'] === product.companyName) {
                   var obj = {};
                   obj.employeeName = jsonObj[i]['employeeName'];
@@ -61,6 +73,7 @@ const uploadCSV = (req, res) => {
                   empForProduct.push({
                     productsId: product._id,
                     employeeName: obj.employeeName,
+                    employeePassword:generatedPassword,
                     employeeEmail: obj.employeeEmail,
                     gender: obj.gender
                   });
