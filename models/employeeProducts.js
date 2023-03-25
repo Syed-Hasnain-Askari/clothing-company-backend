@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var user = new mongoose.Schema({
+var employeeProducts = new mongoose.Schema({
     employeeName: {
         type: String,
         required: true
@@ -15,6 +15,14 @@ var user = new mongoose.Schema({
           productSize: String
         }],
         required: true
-      }
+      },
+      employeeEmail:{
+        type:String,
+        required:true
+      },
+      companyName:{
+        type:String,
+        required:true
+      },
 });
-module.exports = new mongoose.model('user', user);
+module.exports = new mongoose.model('employeeProducts', employeeProducts);
