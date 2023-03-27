@@ -16,89 +16,94 @@ function generatePassword() {
 }
 const uploadCSV = (req, res) => {
   csv()
-    .fromFile(csvFilePath)
-    .then((jsonObj) => {
-      // Create an array to hold user data
-      const products = [];
-      // Create an array to hold employee data
-      const emp = [];
+  .fromFile(csvFilePath)
+  .then((jsonObj) => {
+    // Create an array to hold user data
+    const products = [];
+    // Create an array to hold employee data
+    const emp = [];
 
-      for (var i = 0; i < jsonObj.length; i++) {
-        var obj = {};
-        obj.employeeName = jsonObj[i]['employeeName'];
-        obj.employeeEmail = jsonObj[i]['employeeEmail'];
-        obj.companyName = jsonObj[i]['companyName'];
-        obj.gender = jsonObj[i]['gender'];
-        const productsArray = jsonObj[i]['products'].split(',').map(productString => {
-          const [productName, productSize,productImage,productPrice] = productString.trim().split(' ');
-          return {
-            productName,
-            productSize,
-            productImage,
-            productPrice
-          };
-        });
-        products.push({
-          companyName: obj.companyName,
-          products: productsArray,
-        });
-      }
-      // Insert data into employeeProducts collection
-      employeeProducts.insertMany(products)
-        .then(function (insertedProducts) {
-          insertedProducts.forEach(function (product) {
-           // Create an array to hold employee data for each product
-           const empForProduct = [];
-           for (var i = 0; i < jsonObj.length; i++) {
-               var obj = {};
-               obj.employeeName = jsonObj[i]['employeeName'];
-               obj.employeeEmail = jsonObj[i]['employeeEmail'];
-               obj.gender = jsonObj[i]['gender'];
-               const generatedPassword = generatePassword();
-               empForProduct.push({
-                 productsId: product._id,
-                 employeeName: obj.employeeName,
-                 employeePassword:generatedPassword,
-                 employeeEmail: obj.employeeEmail,
-                 gender: obj.gender
-               });
-           }
-           company.findOne({ name: product.companyName })
-  .then(function (foundCompany) {
-    if (foundCompany) {
-      const employeeIds = empForProduct.map(emp => emp._id);
-      company.updateOne({ _id: foundCompany._id }, { $addToSet: { employees: { $each: employeeIds } } })
-        .catch(function (error) {
-          res.status(500).send({
-            message: "Error adding employees to company:",
-            error
-          });
-        });
-    } else {
-      const employee = empForProduct.map(emp => emp._id)
-      console.log(empForProduct)
-      const newCompany = new company({
-        name: product.companyName,
-        employees: empForProduct.map(emp => emp._id)
+    let companyAdded = false;
+
+    for (var i = 0; i < jsonObj.length; i++) {
+      var obj = {};
+      obj.employeeName = jsonObj[i]['employeeName'];
+      obj.employeeEmail = jsonObj[i]['employeeEmail'];
+      obj.companyName = jsonObj[i]['companyName'];
+      obj.gender = jsonObj[i]['gender'];
+      const productsArray = jsonObj[i]['products'].split(',').map(productString => {
+        const [productName, productSize,productImage,productPrice] = productString.trim().split(' ');
+        return {
+          productName,
+          productSize,
+          productImage,
+          productPrice
+        };
       });
-      newCompany.save()
-        .catch(function (error) {
-          res.status(500).send({
-            message: "Error adding employees to company:",
-            error
-          });
-        });
+      products.push({
+        companyName: obj.companyName,
+        products: productsArray,
+      });
     }
-  })
-  .catch(function (error) {
-    res.status(500).send({
-      message: "Error adding employees to company:",
-      error
-    });
-  });
+    // Insert data into employeeProducts collection
+    employeeProducts.insertMany(products)
+      .then(function (insertedProducts) {
+        insertedProducts.forEach(function (product) {
+         // Create an array to hold employee data for each product
+         const empForProduct = [];
+         for (var i = 0; i < jsonObj.length; i++) {
+             var obj = {};
+             obj.employeeName = jsonObj[i]['employeeName'];
+             obj.employeeEmail = jsonObj[i]['employeeEmail'];
+             obj.gender = jsonObj[i]['gender'];
+             const generatedPassword = generatePassword();
+             empForProduct.push({
+               productsId: product._id,
+               employeeName: obj.employeeName,
+               employeePassword:generatedPassword,
+               employeeEmail: obj.employeeEmail,
+               gender: obj.gender
+             });
+         }
+         if (!companyAdded) {
+           company.findOne({ name: product.companyName })
+            .then(function (foundCompany) {
+              if (foundCompany) {
+                const employeeIds = empForProduct.map(emp => emp._id);
+                company.updateOne({ _id: foundCompany._id }, { $addToSet: { employees: { $each: employeeIds } } })
+                  .catch(function (error) {
+                    res.status(500).send({
+                      message: "Error adding employees to company:",
+                      error
+                    });
+                  });
+              } else {
+                const employee = empForProduct.map(emp => emp._id)
+                console.log(empForProduct)
+                const newCompany = new company({
+                  name: product.companyName,
+                  employees: empForProduct.map(emp => emp._id)
+                });
+                newCompany.save()
+                  .catch(function (error) {
+                    res.status(500).send({
+                      message: "Error adding employees to company:",
+                      error
+                    });
+                  });
+              }
+              companyAdded = true;
+            })
+            .catch(function (error) {
+              res.status(500).send({
+                message: "Error adding employees to company:",
+                error
+              });
+            });
+         }
 
-           emp.push(...empForProduct);
-          });
+         emp.push(...empForProduct);
+        });
           const employeeEmails = emp.map(emp => emp.employeeEmail);
           employee.find({ employeeEmail: { $in: employeeEmails } })
             .then(function (existingEmployees) {

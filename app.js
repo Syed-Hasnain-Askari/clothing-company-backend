@@ -6,6 +6,7 @@ var morgan = require('morgan')
 var app = express();
 
 const upload = require('./routes/uploadCSV');
+const getProducts = require('./routes/products');
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
@@ -18,4 +19,5 @@ app.use((req, res, next)=>{
  next();
 });
 app.use('/api/upload/', upload);
+app.use('/api/product/', getProducts);
 module.exports = app;
