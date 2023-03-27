@@ -1,24 +1,13 @@
 var mongoose = require('mongoose');
 var employeeProducts = new mongoose.Schema({
-    employeeName: {
-        type: String,
-        required: true
-      },
-      gender: {
-        type: String,
-        enum: ['M', 'F'],
-        required: true
-      },
       products: {
         type: [{
           productName: String,
-          productSize: String
+          productSize: String,
+          productImage: String,
+          productPrice: String
         }],
         required: true
-      },
-      employeeEmail:{
-        type:String,
-        required:true
       },
       companyName:{
         type:String,
