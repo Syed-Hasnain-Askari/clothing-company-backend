@@ -19,5 +19,9 @@ var orders = new mongoose.Schema({
         type:String,
         required:true
       },
+      bill:{
+        type:Number,
+        required:true
+      }
 });
 module.exports = new mongoose.model('oders', orders);
