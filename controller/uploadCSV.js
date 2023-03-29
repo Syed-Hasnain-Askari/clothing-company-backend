@@ -40,22 +40,20 @@ const uploadCSV = (req, res) => {
 
       for (var i = 0; i < jsonObj.length; i++) {
         var obj = {};
-        obj.companyName = jsonObj[i]["companyName"];
-        const productsArray = jsonObj[i]["products"]
-          .split(",")
-          .map((productString) => {
-            const [productName, productSize, productImage, Price] =
-              productString.trim().split(" ");
-            const productPrice = parseInt(Price);
-            return {
-              productName,
-              productSize,
-              productImage,
-              productPrice,
-            };
-          });
+        obj.budget = jsonObj[i]['budget'];
+        const productsArray = jsonObj[i]['products'].split(',').map(productString => {
+          const [productName, productSize, productImage, Price] = productString.trim().split(' ');
+          const productPrice  = parseInt(Price)
+          return{
+            productName,
+            productSize,
+            productImage,
+            productPrice
+          };
+        });
         products.push({
           products: productsArray,
+          budget:parseInt(obj.budget)
         });
       }
       // Insert data into employeeProducts collection
