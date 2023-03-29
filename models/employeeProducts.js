@@ -9,10 +9,6 @@ var employeeProducts = new mongoose.Schema({
         }],
         required: true
       },
-      companyName:{
-        type:String,
-        required:true
-      },
       budget:{
         type:Number,
         required:true
