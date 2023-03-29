@@ -9,7 +9,9 @@ var app = express();
 const upload = require('./routes/uploadCSV');
 const getProducts = require('./routes/products');
 const addOrder = require('./routes/order');
+const getOrder = require('./routes/order');
 const addRequest = require('./routes/request');
+const approvedRequest = require('./routes/request');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -25,5 +27,7 @@ app.use((req, res, next) => {
 app.use('/api/upload/', upload);
 app.use('/api/product/', getProducts);
 app.use('/api/order/', addOrder);
+app.use('/api/order/', getOrder);
 app.use('/api/request/', addRequest);
+app.use('/api/request/', approvedRequest);
 module.exports = app;
