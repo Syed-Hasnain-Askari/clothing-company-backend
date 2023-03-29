@@ -4,6 +4,7 @@ const employeeProducts = require("../models/employeeProducts");
 const employee = require("../models/employee");
 const multer = require("multer");
 const company = require("../models/company");
+const { writeFile } = require("../global-functions/GlobalFunctions");
 function generatePassword() {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -17,8 +18,11 @@ function generatePassword() {
 }
 
 const uploadCSV = (req, res) => {
+  const csvData = req.file.buffer;
+  const filePath = "company_data.csv";
+  writeFile(filePath, csvData);
   csv()
-    .fromFile(csvFilePath)
+    .fromFile(filePath)
     .then(async (jsonObj) => {
       // Create an array to hold user data
       const products = [];
@@ -54,7 +58,6 @@ const uploadCSV = (req, res) => {
             };
           });
         products.push({
-          // companyName: obj.companyName,
           products: productsArray,
         });
       }
