@@ -18,11 +18,8 @@ function generatePassword() {
 }
 
 const uploadCSV = (req, res) => {
-  const csvData = req.file.buffer;
-  const filePath = "company_data.csv";
-  writeFile(filePath, csvData);
-  csv()
-    .fromFile(filePath)
+    csv()
+    .fromFile(csvFilePath)
     .then(async (jsonObj) => {
       // Create an array to hold user data
       const products = [];
@@ -107,15 +104,6 @@ const uploadCSV = (req, res) => {
               );
               employee
                 .insertMany(newEmployees)
-                .then((emp) => {
-                  emp.map(function (item) {
-                    const newCompany = new company({
-                      companyName: obj.companyName,
-                      employees: item._id,
-                    });
-                    // newCompany.save();
-                  });
-                })
                 .then(function () {
                   res.status(200).send({
                     message: "Successfully Uploaded!",
