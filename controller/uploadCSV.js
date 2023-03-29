@@ -46,10 +46,8 @@ const uploadCSV = (req, res) => {
       // Insert data into employeeProducts collection
       employeeProducts.insertMany(products)
         .then(function (insertedProducts) {
-          insertedProducts.forEach(function (product) {
-            // Create an array to hold employee data for each product
+          insertedProducts.forEach(function (product,i) {
             const empForProduct = [];
-            for (var i = 0; i < jsonObj.length; i++) {
               var obj = {};
               obj.employeeName = jsonObj[i]['employeeName'];
               obj.employeeEmail = jsonObj[i]['employeeEmail'];
@@ -62,9 +60,12 @@ const uploadCSV = (req, res) => {
                 employeeEmail: obj.employeeEmail,
                 gender: obj.gender
               });
-            }
+              
+            
             //  console.log(empForProduct,"employees")
-            //this section will be resolved
+            //this section will be resolved  
+            // Subhan-Work , I have removed above forloop ,that was the issue in creating duplicates
+
             emp.push(...empForProduct);
           });
           //get employe email to find already existed users
