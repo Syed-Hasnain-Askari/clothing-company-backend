@@ -3,13 +3,14 @@ var mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const addOders = async (req, res) => {
     // Access values in req.body
-    const { employeeId, products, companyName } = req.body;
+    const { employeeId, products, companyName,bill } = req.body;
     console.log(employeeId)
     try {
         const order = new oders({
             employeeId: new ObjectId(employeeId),
             products: products,
-            companyName: companyName
+            companyName: companyName,
+            bill:bill
         });
         const newOders = await order.save();
         res.status(200).send({
