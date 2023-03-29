@@ -28,6 +28,7 @@ const uploadCSV = (req, res) => {
       for (var i = 0; i < jsonObj.length; i++) {
         var obj = {};
         obj.companyName = jsonObj[i]['companyName'];
+        obj.budget = jsonObj[i]['budget'];
         const productsArray = jsonObj[i]['products'].split(',').map(productString => {
           const [productName, productSize, productImage, Price] = productString.trim().split(' ');
           const productPrice  = parseInt(Price)
@@ -41,6 +42,7 @@ const uploadCSV = (req, res) => {
         products.push({
           companyName: obj.companyName,
           products: productsArray,
+          budget:parseInt(obj.budget)
         });
       }
       // Insert data into employeeProducts collection
