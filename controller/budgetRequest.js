@@ -2,6 +2,32 @@ const budgetRequest = require("../models/budgetRequest")
 const budget = require("../models/employeeProducts")
 var mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
+const getBudgetRequest = async (req,res) =>{
+    try{
+        const getBudgetRequest = await budgetRequest.aggregate(
+            [
+                {
+                    '$lookup': {
+                      'from': 'employees', 
+                      'localField': 'employeeId', 
+                      'foreignField': '_id', 
+                      'as': 'result'
+                    }
+                  }, {
+                    '$project': {
+                      'result.employeePassword': 0, 
+                      'result.companyName': 0, 
+                      'result.productsId': 0
+                    }
+                  }
+              ]
+        )
+        res.status(200).send(getBudgetRequest);
+    }
+    catch(error){
+        res.send('Something went wrong').status(500);
+    }
+}
 const addRequest = async (req, res) => {
     // Access values in req.body
     const { employeeId, requestAmount } = req.body;
@@ -29,7 +55,6 @@ const addRequest = async (req, res) => {
 const approvedRequest = async (req, res) => {
     // Access values in req.body
     const { employeeId, approvedAmount,productId } = req.body;
-    console.log(req.body)
     try {
          // Update the approvedAmount and status values in request collection
         const updatedRequest = await budgetRequest.findOneAndUpdate(
@@ -54,6 +79,7 @@ const approvedRequest = async (req, res) => {
     }
 }
 module.exports = {
+    getBudgetRequest,
     addRequest,
     approvedRequest
 }
