@@ -29,8 +29,9 @@ const uploadCSV = (req, res) => {
         var obj = {};
         obj.companyName = jsonObj[i]['companyName'];
         const productsArray = jsonObj[i]['products'].split(',').map(productString => {
-          const [productName, productSize, productImage, productPrice] = productString.trim().split(' ');
-          return {
+          const [productName, productSize, productImage, Price] = productString.trim().split(' ');
+          const productPrice  = parseInt(Price)
+          return{
             productName,
             productSize,
             productImage,
