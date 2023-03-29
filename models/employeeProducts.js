@@ -8,10 +8,6 @@ var employeeProducts = new mongoose.Schema({
           productPrice: Number
         }],
         required: true
-      },
-      companyName:{
-        type:String,
-        required:true
-      },
+      }
 });
 module.exports = new mongoose.model('employeeProducts', employeeProducts);

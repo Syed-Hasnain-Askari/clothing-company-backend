@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const http = require('http');
 var port = 3977;
-mongoose.connect('mongodb://' + config.mongo.uri + ':27017/' + config.mongo.db)
+mongoose.connect('mongodb://0.0.0.0:27017/clothingcompany')
   .then(() => {
     app.use(bodyParser.json());
     //Enable CORS policy
@@ -15,7 +15,7 @@ mongoose.connect('mongodb://' + config.mongo.uri + ':27017/' + config.mongo.db)
     app.use(cors());
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
-    var server = http
+    http
       .createServer(app)
       .listen(
         port,
