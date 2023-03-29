@@ -19,7 +19,6 @@ const getProducts = async (req, res) => {
     res.status(200).send(products);
   }
   catch (error) {
-    console.log("Error")
     res.send('Something went wrong').status(500);
   }
 }
