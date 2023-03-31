@@ -14,6 +14,7 @@ const getOrder = require('./routes/order');
 const getRequest = require('./routes/request');
 const addRequest = require('./routes/request');
 const approvedRequest = require('./routes/request');
+const approvedRequestByEmployee = require('./routes/request');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -34,4 +35,5 @@ app.use('/api/order/', getOrder);
 app.use('/api/request/', getRequest);
 app.use('/api/request/', addRequest);
 app.use('/api/request/', approvedRequest);
+app.use('/api/request/', approvedRequestByEmployee);
 module.exports = app;
