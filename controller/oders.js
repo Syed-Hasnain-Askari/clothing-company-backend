@@ -1,13 +1,12 @@
-const oders = require("../models/oders")
+const Orders = require("../models/oders")
 var mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const addOrders = async (req, res) => {
     // Access values in req.body
     const { employeeId, products, companyName,bill,quantity } = req.body;
-    console.log(employeeId)
     try {
-        const order = new oders({
-            employeeId: new ObjectId(employeeId),
+        const order = new Orders({
+            employeeId: employeeId,
             products: products,
             companyName: companyName,
             bill:bill,
@@ -53,7 +52,24 @@ const getOrders = async (req,res) =>{
         res.send('Something went wrong').status(500);
     }
 }
+const getOrderByEmployeeId = async (req,res) =>{
+    console.log(req.query.employeeId)
+    const employeeId = req.query.employeeId
+    try{
+        const getOrderByEmployeeId = await Orders.find({employeeId: employeeId});
+        if (!getOrderByEmployeeId) {
+            res.status(400).send({message: 'ID not found'});
+          } else {
+            res.send(getOrderByEmployeeId);
+          }
+    }
+    catch(error){
+        console.log(error)
+        res.send('Something went wrong').status(500);
+    }
+}
 module.exports = {
     getOrders,
-    addOrders
+    addOrders,
+    getOrderByEmployeeId
 }
