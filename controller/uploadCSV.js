@@ -5,6 +5,7 @@ const employee = require("../models/employee");
 const multer = require("multer");
 const company = require("../models/company");
 const { writeFile } = require("../global-functions/GlobalFunctions");
+const { parse } = require("uuid");
 function generatePassword() {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -66,6 +67,7 @@ const uploadCSV = (req, res) => {
             obj.employeeName = jsonObj[i]["employeeName"];
             obj.employeeEmail = jsonObj[i]["employeeEmail"];
             obj.gender = jsonObj[i]["gender"];
+            obj.budget = jsonObj[i]["budget"];
             obj.companyName = savedCompany.companyName;
             obj.companyId = savedCompany.id;
 
@@ -78,6 +80,7 @@ const uploadCSV = (req, res) => {
               gender: obj.gender,
               companyName: obj.companyName,
               companyId: obj.companyId,
+              budget: parseInt(obj.budget),
             });
 
             //  console.log(empForProduct,"employees")

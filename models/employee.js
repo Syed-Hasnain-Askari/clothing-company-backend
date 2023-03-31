@@ -30,5 +30,9 @@ var employee = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: "company",
   },
+  budget:{
+    type:Number,
+    required:true
+  },
 });
 module.exports = new mongoose.model("employee", employee);

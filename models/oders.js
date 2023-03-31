@@ -19,6 +19,10 @@ var orders = new mongoose.Schema({
         type:String,
         required:true
       },
+      quantity:{
+        type:Number,
+        required:true
+      },
       bill:{
         type:Number,
         required:true
