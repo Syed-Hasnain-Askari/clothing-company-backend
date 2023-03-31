@@ -4,8 +4,10 @@ const employeeProducts = require("../models/employeeProducts");
 const employee = require("../models/employee");
 const multer = require("multer");
 const company = require("../models/company");
+const manager = require("../models/manager");
 const { writeFile } = require("../global-functions/GlobalFunctions");
 const { parse } = require("uuid");
+
 function generatePassword() {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -17,6 +19,7 @@ function generatePassword() {
   }
   return password;
 }
+
 
 const uploadCSV = (req, res) => {
     csv()
@@ -36,7 +39,26 @@ const uploadCSV = (req, res) => {
         return savedCompany;
       };
       const savedCompany = await saveCompanyF();
+      const companyManager = async (i) => {
+        if (
+          jsonObj[i].managerName != undefined &&
+          jsonObj[i].managerEmail != undefined
+        ) {
+          
+          const newManager = new manager({
+            name: jsonObj[i]?.managerName,
+            managerEmail: jsonObj[i]?.managerEmail,
+            managerPassword: jsonObj[i]?.managerName + "123",
+            company: savedCompany._id,
+          });
 
+          let savedManager = await newManager.save();
+          return savedManager;
+        }
+      };
+      for (let i = 0; i < jsonObj.length; i++) {
+        companyManager(i);
+      }
       let companyAdded = false;
 
       for (var i = 0; i < jsonObj.length; i++) {
