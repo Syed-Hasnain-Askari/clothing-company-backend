@@ -1,6 +1,7 @@
 var csv = require("csvtojson");
 const csvFilePath = `${__dirname}/../uploads/usernamefile.csv`;
 const employeeProducts = require("../models/employeeProducts");
+const companyProductsCollection = require("../models/companyProducts");
 const employee = require("../models/employee");
 const multer = require("multer");
 const company = require("../models/company");
@@ -20,9 +21,27 @@ function generatePassword() {
   return password;
 }
 
+const productFormatConvertor= (jsonObj)=>{
+  // console.log("sss", jsonObj[0].companyProducts)
+   const productsArray = jsonObj[0].companyProducts
+  .split(",")
+  .map((productString) => {
+    const [productName, productSize, productImage, Price] = productString
+      .trim()
+      .split(" ");
+    const productPrice = parseInt(Price);
+    return {
+      productName,
+      productSize,
+      productImage,
+      productPrice,
+    };
+  });
+  return productsArray
+}
 
 const uploadCSV = (req, res) => {
-    csv()
+  csv()
     .fromFile(csvFilePath)
     .then(async (jsonObj) => {
       // Create an array to hold user data
@@ -39,12 +58,24 @@ const uploadCSV = (req, res) => {
         return savedCompany;
       };
       const savedCompany = await saveCompanyF();
+      
+     
+      const companyProducts = async (jsonObj) => {
+        // console.log("json>>>>",jsonObj)
+       let productsArray= await productFormatConvertor(jsonObj);
+       console.log(productsArray)
+        const companyProductsCollectionArray = new  companyProductsCollection({
+          companyId: savedCompany._id,
+          products: productsArray,
+        });
+        await companyProductsCollectionArray.save();
+      };
+      companyProducts(jsonObj);
       const companyManager = async (i) => {
         if (
           jsonObj[i].managerName != undefined &&
           jsonObj[i].managerEmail != undefined
         ) {
-          
           const newManager = new manager({
             name: jsonObj[i]?.managerName,
             managerEmail: jsonObj[i]?.managerEmail,
@@ -63,20 +94,23 @@ const uploadCSV = (req, res) => {
 
       for (var i = 0; i < jsonObj.length; i++) {
         var obj = {};
-        obj.budget = jsonObj[i]['budget'];
-        const productsArray = jsonObj[i]['products'].split(',').map(productString => {
-          const [productName, productSize, productImage, Price] = productString.trim().split(' ');
-          const productPrice  = parseInt(Price)
-          return{
-            productName,
-            productSize,
-            productImage,
-            productPrice
-          };
-        });
+        obj.budget = jsonObj[i]["budget"];
+        const productsArray = jsonObj[i]["products"]
+          .split(",")
+          .map((productString) => {
+            const [productName, productSize, productImage, Price] =
+              productString.trim().split(" ");
+            const productPrice = parseInt(Price);
+            return {
+              productName,
+              productSize,
+              productImage,
+              productPrice,
+            };
+          });
         products.push({
           products: productsArray,
-          budget:parseInt(obj.budget)
+          budget: parseInt(obj.budget),
         });
       }
       // Insert data into employeeProducts collection
@@ -110,7 +144,7 @@ const uploadCSV = (req, res) => {
             // Subhan-Work , I have removed above forloop ,that was the issue in creating
 
             emp.push(...empForProduct);
-            console.log("emp>>", emp);
+            // console.log("emp>>", emp);
           });
           //get employe email to find already existed users
 
