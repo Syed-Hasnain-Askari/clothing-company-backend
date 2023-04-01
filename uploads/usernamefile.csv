@@ -1,4 +1,4 @@
-"employeeName","employeeEmail","companyName","gender","products","budget","managerName","managerEmail"
-"John Doe","john@gmail.com","BISILUX ","M","T-Shirt-JN1808 M https://cdn.mukama.com/31812/formal-friday-ultrafine-merino-t-shirt-black.jpg 100,Sweat-Shirt-JN831 L https://cdn.mukama.com/31812/formal-friday-ultrafine-merino-t-shirt-black.jpg 50","100","subhan","subhan.akram1971@gmail.com"
+"employeeName","employeeEmail","companyName","gender","products","budget","managerName","managerEmail","companyProducts"
+"John Doe","john@gmail.com","BISILUX ","M","T-Shirt-JN1808 M https://cdn.mukama.com/31812/formal-friday-ultrafine-merino-t-shirt-black.jpg 100,Sweat-Shirt-JN831 L https://cdn.mukama.com/31812/formal-friday-ultrafine-merino-t-shirt-black.jpg 50","100","subhan","subhan.akram1971@gmail.com","cap M https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8ODS73crxhvPDipOoN4eL6IDJ84uQoGEKSIhJ8UJ03w&s 10,Arial-shoes sm-9 https://assets.adidas.com/images/c_fillg_auto/9882f76dc5b14339a92bac5a0160ac4f_9366/H01877_01_standard.jpg 50"
 "Williams","williams@gmail.com","BISILUX ","F","Winterjacke-JN824 M https://cdn.mukama.com/31812/formal-friday-ultrafine-merino-t-shirt-black.jpg 60,Herren-Poloshirt-1405 S https://cdn.mukama.com/31812/formal-friday-ultrafine-merino-t-shirt-black.jpg 70","200","salman","salman@gmail.com"
 

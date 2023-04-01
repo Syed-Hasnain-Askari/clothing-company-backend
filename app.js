@@ -1,10 +1,13 @@
 'use strict'
 var express = require('express');
 var bodyParser = require('body-parser');
+const cors = require('cors');
 var morgan = require('morgan')
 
 var app = express();
-
+app.use(cors({
+    origin: '*'
+  }));
 // Routes
 const auth = require('./routes/auth');
 const upload = require('./routes/uploadCSV');
