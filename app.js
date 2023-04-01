@@ -6,7 +6,8 @@ var morgan = require('morgan')
 var app = express();
 
 // Routes
-const auth = require('./routes/auth');
+const employeeLogin = require('./routes/auth');
+const managerLogin = require('./routes/auth');
 const upload = require('./routes/uploadCSV');
 const getProducts = require('./routes/products');
 const addOrder = require('./routes/order');
@@ -27,7 +28,8 @@ app.use((req, res, next) => {
     next();
 });
 // These all are endpoint
-app.use('/api/auth/', auth);
+app.use('/api/auth/', employeeLogin);
+app.use('/api/auth/', managerLogin);
 app.use('/api/upload/', upload);
 app.use('/api/product/', getProducts);
 app.use('/api/order/', addOrder);
