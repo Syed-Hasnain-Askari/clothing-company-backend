@@ -1,4 +1,5 @@
 const Orders = require("../models/oders")
+const Employee = require("../models/employee")
 const Company = require("../models/company")
 var mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
@@ -24,6 +25,16 @@ const addOrders = async (req, res) => {
 
     const newOrders = await Orders.insertMany(orders);
 
+    // Update the budget value for all employees with matching IDs
+    for (const order of newOrders) {
+      const { employeeId, bill } = order;
+      console.log(employeeId,bill)
+      // Update the budget value for each employee with matching ID
+        await Employee.findOneAndUpdate(
+        { _id: employeeId },
+        { $inc: { budget: -bill } }
+      );
+    }
     res.status(200).send({
       result: newOrders,
       message: "Orders have been created successfully!"
@@ -36,6 +47,7 @@ const addOrders = async (req, res) => {
     });
   }
 }
+
 
 const getOrders = async (req, res) => {
   try {
