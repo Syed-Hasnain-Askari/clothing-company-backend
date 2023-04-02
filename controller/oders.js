@@ -1,5 +1,6 @@
 const Orders = require("../models/oders")
 const Employee = require("../models/employee")
+const employeeProducts = require("../models/employeeProducts")
 const Company = require("../models/company")
 var mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
@@ -29,7 +30,7 @@ const addOrders = async (req, res) => {
     }
     if (!isValidOrder) {
       return res.status(400).send({
-        message: "Employee budget is insufficient"
+        message: "Invalid order - employee budget is insufficient"
       });
     }
     const newOrders = await Orders.insertMany(orders);
@@ -39,6 +40,14 @@ const addOrders = async (req, res) => {
       await Employee.findOneAndUpdate(
         { _id: employeeId },
         { $inc: { budget: -bill } }
+      );
+    }
+    // Empty products array in employeeProducts collection
+    for (const orderData of ordersArray) {
+      const { id } = orderData;
+      await employeeProducts.findOneAndUpdate(
+        { _id: id },
+        { $set: { products: [] } }
       );
     }
     res.status(200).send({
