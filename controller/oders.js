@@ -28,7 +28,7 @@ const addOrders = async (req, res) => {
 }
 const getOrders = async (req,res) =>{
     try{
-        const getOrders = await oders.aggregate(
+        const getOrders = await Orders.aggregate(
             [
                 {
                   '$lookup': {
@@ -49,6 +49,7 @@ const getOrders = async (req,res) =>{
         res.status(200).send(getOrders);
     }
     catch(error){
+        console.log(error)
         res.send('Something went wrong').status(500);
     }
 }
