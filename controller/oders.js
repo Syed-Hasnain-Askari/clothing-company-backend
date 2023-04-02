@@ -6,7 +6,7 @@ const addOrders = async (req, res) => {
   try {
     const ordersArray = req.body;
     const orders = [];
-    ordersArray.forEach(({ employeeId, companyId, products, companyName, bill, quantity }) => {
+    ordersArray.forEach(({ employeeId, companyId, products, companyName, bill, quantity, comment }) => {
       const destructuredProducts = products.map(({ productName, productSize, productImage, productPrice }) => ({ productName, productSize, productImage, productPrice }));
 
       const orderObj = new Orders({
@@ -15,7 +15,8 @@ const addOrders = async (req, res) => {
         products: destructuredProducts,
         companyName,
         bill,
-        quantity
+        quantity,
+        comment
       });
 
       orders.push(orderObj);
