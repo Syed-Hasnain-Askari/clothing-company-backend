@@ -2,30 +2,41 @@ const Orders = require("../models/oders")
 var mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const addOrders = async (req, res) => {
-    // Access values in req.body
-    const { employeeId, products, companyName,bill,quantity } = req.body;
     try {
-        const order = new Orders({
-            employeeId: employeeId,
-            products: products,
-            companyName: companyName,
-            bill:bill,
-            quantity:quantity
+      const ordersArray = req.body;
+      const orders = [];
+      ordersArray.forEach(({ employeeId, products, companyName, bill, quantity }) => {
+        const destructuredProducts = products.map(({ productName, productSize, productImage, productPrice }) => ({ productName, productSize, productImage, productPrice }));
+  
+        const orderObj = new Orders({
+          employeeId,
+          products: destructuredProducts,
+          companyName,
+          bill,
+          quantity
         });
-        const newOders = await order.save();
-        res.status(200).send({
-            result: newOders,
-            message: "Oder has been created successfully!"
-        });
+  
+        orders.push(orderObj);
+      });
+  
+      const newOrders = await Orders.insertMany(orders);
+  
+      res.status(200).send({
+        result: newOrders,
+        message: "Orders have been created successfully!"
+      });
+    } catch (error) {
+      console.log(error)
+      res.status(500).send({
+        message: "Something went wrong!",
+        error
+      });
     }
-    catch (error) {
-        console.log(error)
-        res.status(500).send({
-            message: "Something went wrong!",
-            error
-        });
-    }
-}
+  }
+  
+
+
+
 const getOrders = async (req,res) =>{
     try{
         const getOrders = await Orders.aggregate(
