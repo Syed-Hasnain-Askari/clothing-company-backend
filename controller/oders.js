@@ -7,30 +7,36 @@ const addOrders = async (req, res) => {
   try {
     const ordersArray = req.body;
     const orders = [];
-    ordersArray.forEach(({ employeeId, companyId, products, companyName, bill, quantity, comment }) => {
-      const destructuredProducts = products.map(({ productName, productSize, productImage, productPrice }) => ({ productName, productSize, productImage, productPrice }));
-
+    let isValidOrder = true;
+    for (const orderData of ordersArray) {
+      const { employeeId, bill } = orderData;
+      const employee = await Employee.findById(employeeId);
+      if (!employee || employee.budget < bill) {
+        isValidOrder = false;
+        break;
+      }
+      const destructuredProducts = orderData.products.map(({ productName, productSize, productImage, productPrice }) => ({ productName, productSize, productImage, productPrice }));
       const orderObj = new Orders({
         employeeId,
-        companyId,
+        companyId: orderData.companyId,
         products: destructuredProducts,
-        companyName,
-        bill,
-        quantity,
-        comment
+        companyName: orderData.companyName,
+        bill: orderData.bill,
+        quantity: orderData.quantity,
+        comment: orderData.comment
       });
-
       orders.push(orderObj);
-    });
-
+    }
+    if (!isValidOrder) {
+      return res.status(400).send({
+        message: "Employee budget is insufficient"
+      });
+    }
     const newOrders = await Orders.insertMany(orders);
-
     // Update the budget value for all employees with matching IDs
     for (const order of newOrders) {
       const { employeeId, bill } = order;
-      console.log(employeeId,bill)
-      // Update the budget value for each employee with matching ID
-        await Employee.findOneAndUpdate(
+      await Employee.findOneAndUpdate(
         { _id: employeeId },
         { $inc: { budget: -bill } }
       );
