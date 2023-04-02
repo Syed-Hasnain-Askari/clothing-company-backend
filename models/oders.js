@@ -5,6 +5,10 @@ var orders = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'employee'
       },
+      companyId: {
+        type: Schema.Types.ObjectId,
+        ref: 'company'
+      },
       products: {
         type: [{
           _id: false,
