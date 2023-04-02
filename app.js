@@ -9,7 +9,8 @@ app.use(cors({
     origin: '*'
   }));
 // Routes
-const auth = require('./routes/auth');
+const employeeLogin = require('./routes/auth');
+const managerLogin = require('./routes/auth');
 const upload = require('./routes/uploadCSV');
 const getProducts = require('./routes/products');
 const addOrder = require('./routes/order');
@@ -18,6 +19,8 @@ const getRequest = require('./routes/request');
 const addRequest = require('./routes/request');
 const approvedRequest = require('./routes/request');
 const getOrderByEmployeeId = require('./routes/request');
+
+const getEmployeeByCompanyId = require('./routes/employee');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -30,7 +33,8 @@ app.use((req, res, next) => {
     next();
 });
 // These all are endpoint
-app.use('/api/auth/', auth);
+app.use('/api/auth/', employeeLogin);
+app.use('/api/auth/', managerLogin);
 app.use('/api/upload/', upload);
 app.use('/api/product/', getProducts);
 app.use('/api/order/', addOrder);
@@ -39,5 +43,6 @@ app.use('/api/request/', getRequest);
 app.use('/api/request/', addRequest);
 app.use('/api/request/', approvedRequest);
 app.use('/api/order/', getOrderByEmployeeId);
+app.use('/api/employee/', getEmployeeByCompanyId);
 
 module.exports = app;

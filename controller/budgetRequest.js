@@ -1,5 +1,6 @@
 const budgetRequest = require("../models/budgetRequest")
-const budget = require("../models/employeeProducts")
+const employee = require("../models/employee")
+const budget = require("../models/budgetRequest")
 var mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const getBudgetRequest = async (req,res) =>{
@@ -54,7 +55,7 @@ const addRequest = async (req, res) => {
 }
 const approvedRequest = async (req, res) => {
     // Access values in req.body
-    const { employeeId, approvedAmount,productId } = req.body;
+    const { employeeId, approvedAmount } = req.body;
     try {
          // Update the approvedAmount and status values in request collection
         const updatedRequest = await budgetRequest.findOneAndUpdate(
@@ -63,8 +64,8 @@ const approvedRequest = async (req, res) => {
             { new: true }
         );
            // Update the budget value from employeeProducts collection
-           const updatedBudget = await budget.findOneAndUpdate(
-            { _id: productId},
+           const updatedBudget = await employee.findOneAndUpdate(
+            { _id: employeeId},
             { $inc: { budget: approvedAmount } },
             { new: true }
         );
