@@ -17,6 +17,8 @@ const managerLogin = require('./routes/auth');
 const upload = require('./routes/uploadCSV');
 //for products
 const getProducts = require('./routes/products');
+const getProductsByCompanyId = require('./routes/products');
+
 //for orders
 const addOrder = require('./routes/order');
 const getOrder = require('./routes/order');
@@ -48,6 +50,7 @@ app.use('/api/auth/', managerLogin);
 app.use('/api/upload/', upload);
 //for get products
 app.use('/api/product/', getProducts);
+app.use('/api/product/', getProductsByCompanyId);
 //for orders
 app.use('/api/order/', addOrder);
 app.use('/api/order/', getOrder);
