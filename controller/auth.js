@@ -61,7 +61,7 @@ const employeeLogin = async (req, res) => {
                 const resultRes = {
                   message: "Login Successfull",
                   token: token,
-                  managerEmail:result.managerEmail
+                  result:result
                 };
                 res.status(200).send(resultRes);
               } else {
