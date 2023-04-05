@@ -5,14 +5,13 @@ const getCompanyDetails = async (req, res) => {
       const getDetails = await company.findOne({ _id: companyId });
       console.log(getDetails)
       if (!getDetails) {
-        res.status(400).send({message:"Company not found"});
+        return res.status(400).send({message:"Company not found"});
       } else {
-        res.send(getDetails);
+        return res.send(getDetails);
       }
     }
     catch (error) {
-      console.log(error)
-      res.send('Something went wrong').status(500);
+      return res.send('Something went wrong').status(500);
     }
   }
   module.exports = {

@@ -10,9 +10,9 @@ var employeeProducts = new mongoose.Schema({
         }],
         required: true
       },
-      employeeId: {
+      companyId: {
         type: Schema.Types.ObjectId,
-        ref: 'employee'
+        ref: 'company'
       },
 });
 module.exports = new mongoose.model('employeeProducts', employeeProducts);

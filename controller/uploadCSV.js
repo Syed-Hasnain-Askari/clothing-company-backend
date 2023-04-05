@@ -9,6 +9,8 @@ const manager = require("../models/manager");
 const { writeFile } = require("../global-functions/GlobalFunctions");
 const { parse } = require("uuid");
 
+
+//for Auto-generated password
 function generatePassword() {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -20,7 +22,6 @@ function generatePassword() {
   }
   return password;
 }
-
 const productFormatConvertor= (jsonObj)=>{
   // console.log("sss", jsonObj[0].companyProducts)
    const productsArray = jsonObj[0].companyProducts
@@ -44,7 +45,7 @@ const uploadCSV = (req, res) => {
   csv()
     .fromFile(csvFilePath)
     .then(async (jsonObj) => {
-      // Create an array to hold user data
+      // Create an array to hold products data
       const products = [];
       // Create an array to hold employee data
       const emp = [];
@@ -62,7 +63,7 @@ const uploadCSV = (req, res) => {
       };
       const savedCompany = await saveCompanyF();
       
-     
+     //for create a collection of company products
       const companyProducts = async (jsonObj) => {
         // console.log("json>>>>",jsonObj)
        let productsArray= await productFormatConvertor(jsonObj);
@@ -93,10 +94,7 @@ const uploadCSV = (req, res) => {
       for (let i = 0; i < jsonObj.length; i++) {
         companyManager(i);
       }
-      let companyAdded = false;
-
       for (var i = 0; i < jsonObj.length; i++) {
-        var obj = {};
         const productsArray = jsonObj[i]['products'].split(',').map(productString => {
           const [productName, productSize, productImage, Price] = productString.trim().split(' ');
           const productPrice  = parseInt(Price)
@@ -109,6 +107,7 @@ const uploadCSV = (req, res) => {
         });
         products.push({
           products: productsArray,
+          companyId:savedCompany._id
         });
       }
       // Insert data into employeeProducts collection
