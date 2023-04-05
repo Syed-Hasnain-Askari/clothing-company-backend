@@ -33,6 +33,9 @@ const getEmployeeByCompanyId = require('./routes/employee');
 //for get companyDetails
 const getCompanyDetails = require('./routes/company');
 
+// for add products  :
+const rough = require('./routes/rough');
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(morgan('tiny'))
@@ -66,5 +69,8 @@ app.use('/api/request/', approvedRequest);
 app.use('/api/employee/', getEmployeeByCompanyId);
 //for get companyDetails
 app.use('/api/company/', getCompanyDetails);
+
+// for add products in order array 
+app.use("/api/employee/",rough)
 
 module.exports = app;
