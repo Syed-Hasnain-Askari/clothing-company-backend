@@ -52,6 +52,9 @@ const uploadCSV = (req, res) => {
       const saveCompanyF = async () => {
         const newCompany = new company({
           companyName: jsonObj[0].companyName,
+          companyEmail: jsonObj[0].companyEmail,
+          companyPhone: jsonObj[0].companyPhone,
+          companyFax: jsonObj[0].companyFax,
         });
 
         let savedCompany = await newCompany.save();

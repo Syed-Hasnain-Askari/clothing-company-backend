@@ -30,6 +30,8 @@ const addRequest = require('./routes/request');
 const approvedRequest = require('./routes/request');
 //for get employees
 const getEmployeeByCompanyId = require('./routes/employee');
+//for get companyDetails
+const getCompanyDetails = require('./routes/company');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -62,5 +64,7 @@ app.use('/api/request/', addRequest);
 app.use('/api/request/', approvedRequest);
 //for get employees
 app.use('/api/employee/', getEmployeeByCompanyId);
+//for get companyDetails
+app.use('/api/company/', getCompanyDetails);
 
 module.exports = app;
