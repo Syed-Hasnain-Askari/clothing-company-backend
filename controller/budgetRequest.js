@@ -86,7 +86,7 @@ const changeBudgetByManager = async (req, res) => {
            // Update the budget value from employeeProducts collection
            const updatedBudget = await employee.findOneAndUpdate(
             { _id: employeeId},
-            { $inc: { budget: changeBudgetAmount } },
+            { $set: { budget: changeBudgetAmount } },
             { new: true }
         );
         res.status(200).json({
