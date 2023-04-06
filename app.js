@@ -29,6 +29,7 @@ const getOrderByCompanyId = require('./routes/request');
 const getRequest = require('./routes/request');
 const addRequest = require('./routes/request');
 const approvedRequest = require('./routes/request');
+const changeBudgetByManager = require('./routes/request')
 //for get employees
 const getEmployeeByCompanyId = require('./routes/employee');
 //for get companyDetails
@@ -67,6 +68,7 @@ app.use('/api/order/', getOrderByCompanyId);
 app.use('/api/request/', getRequest);
 app.use('/api/request/', addRequest);
 app.use('/api/request/', approvedRequest);
+app.use('/api/request/', changeBudgetByManager);
 //for get employees
 app.use('/api/employee/', getEmployeeByCompanyId);
 //for get companyDetails

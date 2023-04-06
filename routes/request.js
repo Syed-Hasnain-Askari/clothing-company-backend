@@ -4,5 +4,5 @@ const request = require("../controller/budgetRequest")
 router.get('/get-request', request.getBudgetRequest);
 router.post('/add-request', request.addRequest);
 router.put('/approved-request', request.approvedRequest);
-router.put('/change-budget', request.approvedRequestByEmployee);
+router.put('/change-budget', request.changeBudgetByManager);
 module.exports = router
