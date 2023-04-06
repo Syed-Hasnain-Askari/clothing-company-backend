@@ -79,19 +79,19 @@ const approvedRequest = async (req, res) => {
         res.status(500).json({ message: 'Error updating request' });
     }
 }
-const approvedRequestByEmployee = async (req, res) => {
+const changeBudgetByManager = async (req, res) => {
     // Access values in req.body
-    const { productId,changeBudgetAmount } = req.body;
+    const { employeeId,changeBudgetAmount } = req.body;
     try {
            // Update the budget value from employeeProducts collection
-           const updatedBudget = await budget.findOneAndUpdate(
-            { _id: productId},
+           const updatedBudget = await employee.findOneAndUpdate(
+            { _id: employeeId},
             { $inc: { budget: changeBudgetAmount } },
             { new: true }
         );
         res.status(200).json({
             updatedBudget: updatedBudget,
-            message: 'Product budget has been changed'
+            message: 'Employee budget has been changed'
         });
     } catch (error) {
         console.log(error);
@@ -102,5 +102,5 @@ module.exports = {
     getBudgetRequest,
     addRequest,
     approvedRequest,
-    approvedRequestByEmployee
+    changeBudgetByManager
 }

@@ -6,6 +6,7 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const addProduct = async (req, res) => {
   let resProduct = req.body;
+  console.log(resProduct)
   let empId = req.query.employeeId;
 
   try {

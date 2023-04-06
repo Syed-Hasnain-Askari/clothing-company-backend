@@ -18,6 +18,7 @@ const upload = require('./routes/uploadCSV');
 //for products
 const getProducts = require('./routes/products');
 const getProductsByCompanyId = require('./routes/products');
+const getEmployeeProductsByCompanyId = require('./routes/products')
 
 //for orders
 const addOrder = require('./routes/order');
@@ -28,8 +29,11 @@ const getOrderByCompanyId = require('./routes/request');
 const getRequest = require('./routes/request');
 const addRequest = require('./routes/request');
 const approvedRequest = require('./routes/request');
+const changeBudgetByManager = require('./routes/request')
 //for get employees
 const getEmployeeByCompanyId = require('./routes/employee');
+//for get companyDetails
+const getCompanyDetails = require('./routes/company');
 
 // for add products  :
 const rough = require('./routes/rough');
@@ -54,6 +58,7 @@ app.use('/api/upload/', upload);
 //for get products
 app.use('/api/product/', getProducts);
 app.use('/api/product/', getProductsByCompanyId);
+app.use('/api/product/', getEmployeeProductsByCompanyId);
 //for orders
 app.use('/api/order/', addOrder);
 app.use('/api/order/', getOrder);
@@ -63,8 +68,11 @@ app.use('/api/order/', getOrderByCompanyId);
 app.use('/api/request/', getRequest);
 app.use('/api/request/', addRequest);
 app.use('/api/request/', approvedRequest);
+app.use('/api/request/', changeBudgetByManager);
 //for get employees
 app.use('/api/employee/', getEmployeeByCompanyId);
+//for get companyDetails
+app.use('/api/company/', getCompanyDetails);
 
 // for add products in order array 
 app.use("/api/employee/",rough)
