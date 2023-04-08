@@ -23,6 +23,7 @@ const getEmployeeProductsByCompanyId = require('./routes/products')
 //for orders
 const addOrder = require('./routes/order');
 const getOrder = require('./routes/order');
+const getTotalOrder = require('./routes/order');
 const getOrderByEmployeeId = require('./routes/request');
 const getOrderByCompanyId = require('./routes/request');
 //for requests
@@ -32,6 +33,7 @@ const approvedRequest = require('./routes/request');
 const changeBudgetByManager = require('./routes/request')
 //for get employees
 const getEmployeeByCompanyId = require('./routes/employee');
+const getTotalEmployee = require('./routes/employee');
 //for get companyDetails
 const getCompanyDetails = require('./routes/company');
 
@@ -62,6 +64,7 @@ app.use('/api/product/', getEmployeeProductsByCompanyId);
 //for orders
 app.use('/api/order/', addOrder);
 app.use('/api/order/', getOrder);
+app.use('/api/order/', getTotalOrder);
 app.use('/api/order/', getOrderByEmployeeId);
 app.use('/api/order/', getOrderByCompanyId);
 //for add request and approved request
@@ -76,5 +79,6 @@ app.use('/api/company/', getCompanyDetails);
 
 // for add products in order array 
 app.use("/api/employee/",rough)
+app.use("/api/employee/",getTotalEmployee)
 
 module.exports = app;

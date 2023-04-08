@@ -1,6 +1,5 @@
 const budgetRequest = require("../models/budgetRequest")
 const employee = require("../models/employee")
-const budget = require("../models/budgetRequest")
 var mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const getBudgetRequest = async (req,res) =>{
@@ -33,17 +32,29 @@ const addRequest = async (req, res) => {
     // Access values in req.body
     const { employeeId, requestAmount } = req.body;
     try {
-        const newRequest = new budgetRequest({
-            employeeId: new ObjectId(employeeId),
-            requestAmount: requestAmount,
-            approvedAmount: 0,
-            status: 0
-        });
-        const requestCreated = await newRequest.save();
-        res.status(200).send({
-            result: requestCreated,
-            message: "Request has been created successfully!"
-        });
+        budgetRequest.find({
+            employeeId: { $in: employeeId }
+        })
+        .then(async (existingEmployees)=>{
+            if(existingEmployees.length > 0){
+                return res.status(400).send({
+                    message: "Sorry! You have already sent your budget request"
+                });
+            }
+            else{
+                const newRequest = new budgetRequest({
+                    employeeId: new ObjectId(employeeId),
+                    requestAmount: requestAmount,
+                    approvedAmount: 0,
+                    status: 0
+                });
+                const requestCreated = await newRequest.save();
+                res.status(200).send({
+                    result: requestCreated,
+                    message: "Request has been created successfully!"
+                });
+            }
+        })        
     }
     catch (error) {
         console.log(error)
@@ -55,30 +66,37 @@ const addRequest = async (req, res) => {
 }
 const approvedRequest = async (req, res) => {
     // Access values in req.body
-    const { employeeId, approvedAmount ,status } = req.body;
+    const { employeeId, approvedAmount, status, requestId } = req.body;
     try {
-         // Update the approvedAmount and status values in request collection
+        // Update the approvedAmount and status values in request collection
         const updatedRequest = await budgetRequest.findOneAndUpdate(
             { employeeId: employeeId },
             { $set: { approvedAmount: approvedAmount, status: status } },
             { new: true }
         );
-           // Update the budget value from employeeProducts collection
-           const updatedBudget = await employee.findOneAndUpdate(
-            { _id: employeeId},
+        // Update the budget value from employeeProducts collection
+        const updatedBudget = await employee.findOneAndUpdate(
+            { _id: employeeId },
             { $inc: { budget: approvedAmount } },
             { new: true }
         );
-        res.status(200).json({
-            updatedRequest: updatedRequest,
-            updatedBudget: updatedBudget,
-            message: 'Request has been approved'
-        });
+        const removedRequest = await budgetRequest.findByIdAndRemove(requestId);
+        if (!removedRequest) {
+            res.status(400).send({ message: 'ID not found' });
+        } else {
+            const message = status === 1 ? 'Your request has been accepted' : 'Your request has not been rejected';
+            res.status(200).json({
+                updatedRequest: updatedRequest,
+                updatedBudget: updatedBudget,
+                message: message
+            });
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Error updating request' });
     }
 }
+
 const changeBudgetByManager = async (req, res) => {
     // Access values in req.body
     const { employeeId,changeBudgetAmount } = req.body;
