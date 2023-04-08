@@ -9,7 +9,7 @@ var budgetRequest = new mongoose.Schema({
     type:Number,
     required:true
   },
-  aprovedAmount:{
+  approvedAmount:{
     type:Number,
     required:true
   },

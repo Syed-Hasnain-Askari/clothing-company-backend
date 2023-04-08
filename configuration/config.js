@@ -1,10 +1,11 @@
 
 var config = module.exports = {};
-
+const dotenv = require('dotenv');
+dotenv.config();
  
 //mongo database
 config.mongo = {};
-config.mongo.uri = process.env.MONGO_URI || 'localhost';
+config.mongo.uri = process.env.CONNECTION_STRING || 'localhost';
 config.mongo.db = 'clothingcompany';
 
 
