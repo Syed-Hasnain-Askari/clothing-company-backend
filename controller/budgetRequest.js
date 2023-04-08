@@ -1,6 +1,5 @@
 const budgetRequest = require("../models/budgetRequest")
 const employee = require("../models/employee")
-const budget = require("../models/budgetRequest")
 var mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const getBudgetRequest = async (req,res) =>{
@@ -33,17 +32,30 @@ const addRequest = async (req, res) => {
     // Access values in req.body
     const { employeeId, requestAmount } = req.body;
     try {
-        const newRequest = new budgetRequest({
-            employeeId: new ObjectId(employeeId),
-            requestAmount: requestAmount,
-            approvedAmount: 0,
-            status: 0
-        });
-        const requestCreated = await newRequest.save();
-        res.status(200).send({
-            result: requestCreated,
-            message: "Request has been created successfully!"
-        });
+        budgetRequest.find({
+            employeeId: { $in: employeeId }
+        })
+        .then(async (existingEmployees)=>{
+            if(existingEmployees.length > 0){
+                return res.status(400).send({
+                    message: "Sorry! You have already sent your budget request"
+                });
+            }
+            else{
+                const newRequest = new budgetRequest({
+                    employeeId: new ObjectId(employeeId),
+                    requestAmount: requestAmount,
+                    approvedAmount: 0,
+                    status: 0
+                });
+                const requestCreated = await newRequest.save();
+                res.status(200).send({
+                    result: requestCreated,
+                    message: "Request has been created successfully!"
+                });
+            }
+        })
+        
     }
     catch (error) {
         console.log(error)
