@@ -28,3 +28,4 @@ mongoose.connect(DB,{
         console.log(`Server is running on the port no: ${port} `),
       );
 }).catch((err)=>{console.log("err",err)})
+
