@@ -54,8 +54,7 @@ const addRequest = async (req, res) => {
                     message: "Request has been created successfully!"
                 });
             }
-        })
-        
+        })        
     }
     catch (error) {
         console.log(error)
@@ -67,30 +66,37 @@ const addRequest = async (req, res) => {
 }
 const approvedRequest = async (req, res) => {
     // Access values in req.body
-    const { employeeId, approvedAmount ,status } = req.body;
+    const { employeeId, approvedAmount, status, requestId } = req.body;
     try {
-         // Update the approvedAmount and status values in request collection
+        // Update the approvedAmount and status values in request collection
         const updatedRequest = await budgetRequest.findOneAndUpdate(
             { employeeId: employeeId },
             { $set: { approvedAmount: approvedAmount, status: status } },
             { new: true }
         );
-           // Update the budget value from employeeProducts collection
-           const updatedBudget = await employee.findOneAndUpdate(
-            { _id: employeeId},
+        // Update the budget value from employeeProducts collection
+        const updatedBudget = await employee.findOneAndUpdate(
+            { _id: employeeId },
             { $inc: { budget: approvedAmount } },
             { new: true }
         );
-        res.status(200).json({
-            updatedRequest: updatedRequest,
-            updatedBudget: updatedBudget,
-            message: 'Request has been approved'
-        });
+        const removedRequest = await budgetRequest.findByIdAndRemove(requestId);
+        if (!removedRequest) {
+            res.status(400).send({ message: 'ID not found' });
+        } else {
+            const message = status === 1 ? 'Your request has been accepted' : 'Your request has not been rejected';
+            res.status(200).json({
+                updatedRequest: updatedRequest,
+                updatedBudget: updatedBudget,
+                message: message
+            });
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Error updating request' });
     }
 }
+
 const changeBudgetByManager = async (req, res) => {
     // Access values in req.body
     const { employeeId,changeBudgetAmount } = req.body;
