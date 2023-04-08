@@ -5,9 +5,11 @@ var config = require('./configuration/config');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const http = require('http');
+const dotenv = require('dotenv');
+dotenv.config();
 var port = 3977;
-const DB =
-  "mongodb+srv://clothingcompany:clothingcompany123@cluster0.61kmc.mongodb.net/?retryWrites=true&w=majority";
+// mongodb://0.0.0.0:27017/clothingcompany
+const DB = config.mongo.uri
 mongoose.connect(DB,{
     useNewUrlParser: true, useUnifiedTopology: true 
 }).then(()=>{
@@ -22,26 +24,8 @@ mongoose.connect(DB,{
     http
       .createServer(app)
       .listen(
-        port,
+        process.env.PORT,
         console.log(`Server is running on the port no: ${port} `),
       );
 }).catch((err)=>{console.log("err",err)})
-// mongoose.connect('mongodb://0.0.0.0:27017/clothingcompany')
-//   .then(() => {
-//     app.use(bodyParser.json());
-//     //Enable CORS policy
-//     app.use(cors());
-//     app.options('*', cors());
-//     app.use(cors());
-//     app.use(bodyParser.urlencoded({ extended: false }));
-//     app.use(bodyParser.json());
-//     http
-//       .createServer(app)
-//       .listen(
-//         port,
-//         console.log(`Server is running on the port no: ${port} `),
-//       );
-//   })
-//   .catch((err) => {
-//     console.error('Failed to connect to MongoDB', err);
-//   });
+
