@@ -33,6 +33,7 @@ const approvedRequest = require('./routes/request');
 const changeBudgetByManager = require('./routes/request')
 //for get employees
 const getEmployeeByCompanyId = require('./routes/employee');
+const getTotalEmployee = require('./routes/employee');
 //for get companyDetails
 const getCompanyDetails = require('./routes/company');
 
@@ -78,5 +79,6 @@ app.use('/api/company/', getCompanyDetails);
 
 // for add products in order array 
 app.use("/api/employee/",rough)
+app.use("/api/employee/",getTotalEmployee)
 
 module.exports = app;
