@@ -23,6 +23,7 @@ const getEmployeeProductsByCompanyId = require('./routes/products')
 //for orders
 const addOrder = require('./routes/order');
 const getOrder = require('./routes/order');
+const getTotalOrder = require('./routes/order');
 const getOrderByEmployeeId = require('./routes/request');
 const getOrderByCompanyId = require('./routes/request');
 //for requests
@@ -62,6 +63,7 @@ app.use('/api/product/', getEmployeeProductsByCompanyId);
 //for orders
 app.use('/api/order/', addOrder);
 app.use('/api/order/', getOrder);
+app.use('/api/order/', getTotalOrder);
 app.use('/api/order/', getOrderByEmployeeId);
 app.use('/api/order/', getOrderByCompanyId);
 //for add request and approved request

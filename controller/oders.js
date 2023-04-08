@@ -81,10 +81,37 @@ const getOrders = async (req, res) => {
             'result.companyName': 0,
             'result.productsId': 0,
           }
+        },
+        {
+          '$count': 'totalOrder'
         }
       ]
     )
     res.status(200).send(getOrders);
+  }
+  catch (error) {
+    console.log(error)
+    res.send('Something went wrong').status(500);
+  }
+}
+const totalOrder = async (req, res) => {
+  try {
+    const getTotalOrders = await Orders.aggregate(
+      [
+        {
+          '$lookup': {
+            'from': 'employees',
+            'localField': 'employeeId',
+            'foreignField': '_id',
+            'as': 'result'
+          }
+        }, 
+        {
+          '$count': 'totalOrder'
+        }
+      ]
+    )
+    res.status(200).send(getTotalOrders);
   }
   catch (error) {
     console.log(error)
@@ -152,6 +179,7 @@ const getOrderByCompanyId = async (req, res) => {
 module.exports = {
   getOrderByCompanyId,
   getOrders,
+  totalOrder,
   addOrders,
   getOrderByEmployeeId
 }
