@@ -55,12 +55,12 @@ const addRequest = async (req, res) => {
 }
 const approvedRequest = async (req, res) => {
     // Access values in req.body
-    const { employeeId, approvedAmount } = req.body;
+    const { employeeId, approvedAmount ,status } = req.body;
     try {
          // Update the approvedAmount and status values in request collection
         const updatedRequest = await budgetRequest.findOneAndUpdate(
             { employeeId: employeeId },
-            { $set: { approvedAmount: approvedAmount, status: 1 } },
+            { $set: { approvedAmount: approvedAmount, status: status } },
             { new: true }
         );
            // Update the budget value from employeeProducts collection
