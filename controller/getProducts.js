@@ -3,6 +3,37 @@ const ObjectId = mongoose.Types.ObjectId;
 const employee = require('../models/employee');
 const companyProducts = require("../models/companyProducts");
 const company = require('../models/company');
+
+const getProductsByEmployeeId = async (req, res) => {
+  const employeeId = req.query.employeeId
+  try {
+    const employeeProducts = await employee.aggregate([
+      {
+        '$match': {
+          '_id': new ObjectId(employeeId)
+        }
+      }, {
+        '$lookup': {
+          'from': 'employeeproducts', 
+          'localField': 'productsId', 
+          'foreignField': '_id', 
+          'as': 'products'
+        }
+      }, {
+        '$project': {
+          'employeePassword': 0, 
+          'companyName': 0, 
+          'companyId': 0, 
+          'productsId': 0
+        }
+      }
+    ]);
+    res.status(200).send(employeeProducts);
+  }
+  catch (error) {
+    res.send('Something went wrong').status(500);
+  }
+}
 const getProducts = async (req, res) => {
   try {
     const products = await employee.aggregate([
@@ -84,5 +115,6 @@ const getProductsByCompanyId = async (req, res) => {
 module.exports = {
   getProducts,
   getEmployeeProductByCompanyId,
-  getProductsByCompanyId
+  getProductsByCompanyId,
+  getProductsByEmployeeId
 }
