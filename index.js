@@ -9,10 +9,9 @@ const dotenv = require('dotenv');
 dotenv.config();
 var port = 3977;
 // mongodb://0.0.0.0:27017/clothingcompany
-const DB = config.mongo.uri
-mongoose.connect(DB,{
-    useNewUrlParser: true, useUnifiedTopology: true 
-}).then(()=>{
+// useNewUrlParser: true, useUnifiedTopology: true 
+// const DB = config.mongo.uri
+mongoose.connect("mongodb://0.0.0.0:27017/clothingcompany").then(()=>{
     console.log("connection successfully !")
     app.use(bodyParser.json());
     //Enable CORS policy

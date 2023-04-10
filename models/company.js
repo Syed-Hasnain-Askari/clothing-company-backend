@@ -5,6 +5,7 @@ const company = new mongoose.Schema({
   companyEmail: { type: String },
   companyPhone: { type: String },
   companyFax: { type: String },
+  companyLogo: { type: String },
   // employees: [{ type: Schema.Types.ObjectId, ref: 'employee' }],
 });
 module.exports = new mongoose.model('company', company);

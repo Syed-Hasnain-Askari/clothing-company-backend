@@ -6,7 +6,8 @@ var employeeProducts = new mongoose.Schema({
           productName: String,
           productSize: String,
           productImage: String,
-          productPrice: Number
+          productPrice: Number,
+          productQuantity:Number
         }],
         required: true
       },

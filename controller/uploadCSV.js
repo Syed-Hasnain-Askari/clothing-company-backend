@@ -56,6 +56,7 @@ const uploadCSV = (req, res) => {
           companyEmail: jsonObj[0].companyEmail,
           companyPhone: jsonObj[0].companyPhone,
           companyFax: jsonObj[0].companyFax,
+          companyLogo: jsonObj[0].companyLogo,
         });
 
         let savedCompany = await newCompany.save();
@@ -96,13 +97,15 @@ const uploadCSV = (req, res) => {
       }
       for (var i = 0; i < jsonObj.length; i++) {
         const productsArray = jsonObj[i]['products'].split(',').map(productString => {
-          const [productName, productSize, productImage, Price] = productString.trim().split(' ');
+          const [productName, productSize, productImage, Price,Quantity] = productString.trim().split(' ');
           const productPrice  = parseInt(Price)
+          const productQuantity  = parseInt(Quantity)
           return{
             productName,
             productSize,
             productImage,
-            productPrice
+            productPrice,
+            productQuantity
           };
         });
         products.push({

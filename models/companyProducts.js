@@ -8,6 +8,7 @@ var companyProducts = new mongoose.Schema({
         productSize: String,
         productImage: String,
         productPrice: Number,
+        // productQuantity:Number
       },
     ],
   },
