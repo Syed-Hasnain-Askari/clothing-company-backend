@@ -24,7 +24,7 @@ const employeeLogin = async (req, res) => {
                 const resultRes = {
                   message: "Login Successfull",
                   token: token,
-                  employeeEmail:result.employeeEmail
+                  employeeEmail:result
                 };
                 res.status(200).send(resultRes);
               } else {
