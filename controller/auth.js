@@ -1,6 +1,8 @@
 const employee = require("../models/employee")
 const manager = require("../models/manager")
 const jwt = require("jsonwebtoken");
+
+
 const employeeLogin = async (req, res) => {
     try {
         const {employeeEmail,employeePassword} = req.body;
@@ -21,10 +23,12 @@ const employeeLogin = async (req, res) => {
                 var token = jwt.sign({ result: result }, "ClothingCompany", {
                   expiresIn: "30d",
                 });
+                
                 const resultRes = {
                   message: "Login Successfull",
                   token: token,
-                  employeeEmail:result
+                  result:result,
+                  name:result.employeeName
                 };
                 res.status(200).send(resultRes);
               } else {
@@ -38,6 +42,7 @@ const employeeLogin = async (req, res) => {
       res.status(500).send("Something went wrong");
     }
   };
+
   const managerLogin = async (req, res) => {
     try {
         const {managerEmail,managerPassword} = req.body;
@@ -61,7 +66,8 @@ const employeeLogin = async (req, res) => {
                 const resultRes = {
                   message: "Login Successfull",
                   token: token,
-                  result:result
+                  result:result,
+                  name:result.name
                 };
                 res.status(200).send(resultRes);
               } else {
