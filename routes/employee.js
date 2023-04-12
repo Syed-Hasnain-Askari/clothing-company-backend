@@ -1,6 +1,6 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const employee = require("../controller/employee")
-router.get('/get-employeebycompanyId',employee.getEmployeeByCompany );
-router.get('/get-totalemployee',employee.totalEmployee );
-module.exports = router
+const employee = require('../controller/employee');
+router.get('/get-employeebycompanyId', employee.getEmployeeByCompany);
+router.get('/get-totalemployee:companyId?', employee.totalEmployee);
+module.exports = router;

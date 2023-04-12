@@ -1,10 +1,9 @@
 const company = require('../models/company');
 const mongoose = require('mongoose');
-const employee = require('../models/employee');
+const Employee = require('../models/employee');
 const ObjectId = mongoose.Types.ObjectId;
 const getEmployeeByCompany = async (req, res) => {
   const companyId = req.query.companyId;
-  console.log(companyId);
   try {
     const getEmployeeByCompanyId = await company.aggregate(
       [
@@ -37,13 +36,22 @@ const getEmployeeByCompany = async (req, res) => {
 };
 const totalEmployee = async (req, res) => {
   try {
-    const getTotalEmployee = await employee.aggregate(
+    const { companyId } = req.query;
+    let pipeline =
       [
         {
           $count: 'totalEmployee'
         }
-      ]
-    );
+      ];
+    if (companyId) {
+      pipeline = [
+        {
+          $match: { companyId: new ObjectId(companyId) }
+        },
+        ...pipeline
+      ];
+    }
+    const getTotalEmployee = await Employee.aggregate(pipeline);
     res.status(200).send(getTotalEmployee);
   } catch (error) {
     console.log(error);

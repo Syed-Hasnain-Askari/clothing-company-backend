@@ -95,27 +95,39 @@ const getOrders = async (req, res) => {
 };
 const totalOrder = async (req, res) => {
   try {
-    const getTotalOrders = await Orders.aggregate(
-      [
-        {
-          $lookup: {
-            from: 'employees',
-            localField: 'employeeId',
-            foreignField: '_id',
-            as: 'result'
-          }
-        },
-        {
-          $count: 'totalOrder'
+    const { companyId } = req.query;
+
+    let pipeline = [
+      {
+        $lookup: {
+          from: 'employees',
+          localField: 'employeeId',
+          foreignField: '_id',
+          as: 'result'
         }
-      ]
-    );
+      },
+      {
+        $count: 'totalOrder'
+      }
+    ];
+
+    if (companyId) {
+      pipeline = [
+        {
+          $match: { companyId: new ObjectId(companyId) }
+        },
+        ...pipeline
+      ];
+    }
+
+    const getTotalOrders = await Orders.aggregate(pipeline);
     res.status(200).send(getTotalOrders);
   } catch (error) {
     console.log(error);
     res.send('Something went wrong').status(500);
   }
 };
+
 const getOrderByEmployeeId = async (req, res) => {
   console.log(req.query.employeeId);
   const employeeId = req.query.employeeId;
