@@ -1,6 +1,7 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var orders = new mongoose.Schema({
+const mongoose = require('mongoose');
+const Modal = mongoose.model;
+const Schema = mongoose.Schema;
+const orders = new mongoose.Schema({
   employeeId: {
     type: Schema.Types.ObjectId,
     ref: 'employee'
@@ -36,4 +37,4 @@ var orders = new mongoose.Schema({
     required: true
   }
 });
-module.exports = new mongoose.model('oders', orders);
+module.exports = new Modal('oders', orders);

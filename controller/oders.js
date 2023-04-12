@@ -1,8 +1,8 @@
-const Orders = require("../models/oders")
-const Employee = require("../models/employee")
-const employeeProducts = require("../models/employeeProducts")
-const Company = require("../models/company")
-var mongoose = require('mongoose');
+const Orders = require('../models/oders');
+const Employee = require('../models/employee');
+const employeeProducts = require('../models/employeeProducts');
+const Company = require('../models/company');
+const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const addOrders = async (req, res) => {
   try {
@@ -16,6 +16,7 @@ const addOrders = async (req, res) => {
         isValidOrder = false;
         break;
       }
+      // eslint-disable-next-line max-len
       const destructuredProducts = orderData.products.map(({ productName, productSize, productImage, productPrice }) => ({ productName, productSize, productImage, productPrice }));
       const orderObj = new Orders({
         employeeId,
@@ -30,7 +31,7 @@ const addOrders = async (req, res) => {
     }
     if (!isValidOrder) {
       return res.status(400).send({
-        message: "Invalid order - employee budget is insufficient"
+        message: 'Invalid order - employee budget is insufficient'
       });
     }
     const newOrders = await Orders.insertMany(orders);
@@ -52,115 +53,111 @@ const addOrders = async (req, res) => {
     }
     res.status(200).send({
       result: newOrders,
-      message: "Orders have been created successfully!"
+      message: 'Orders have been created successfully!'
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).send({
-      message: "Something went wrong!",
+      message: 'Something went wrong!',
       error
     });
   }
-}
-
+};
 
 const getOrders = async (req, res) => {
   try {
     const getOrders = await Orders.aggregate(
       [
         {
-          '$lookup': {
-            'from': 'employees',
-            'localField': 'employeeId',
-            'foreignField': '_id',
-            'as': 'result'
+          $lookup: {
+            from: 'employees',
+            localField: 'employeeId',
+            foreignField: '_id',
+            as: 'result'
           }
         }, {
-          '$project': {
+          $project: {
             'result.employeePassword': 0,
             'result.companyName': 0,
-            'result.productsId': 0,
+            'result.productsId': 0
           }
         },
         {
-          '$count': 'totalOrder'
+          $count: 'totalOrder'
         }
       ]
-    )
+    );
     res.status(200).send(getOrders);
-  }
-  catch (error) {
-    console.log(error)
+  } catch (error) {
+    console.log(error);
     res.send('Something went wrong').status(500);
   }
-}
+};
 const totalOrder = async (req, res) => {
   try {
     const getTotalOrders = await Orders.aggregate(
       [
         {
-          '$lookup': {
-            'from': 'employees',
-            'localField': 'employeeId',
-            'foreignField': '_id',
-            'as': 'result'
+          $lookup: {
+            from: 'employees',
+            localField: 'employeeId',
+            foreignField: '_id',
+            as: 'result'
           }
-        }, 
+        },
         {
-          '$count': 'totalOrder'
+          $count: 'totalOrder'
         }
       ]
-    )
+    );
     res.status(200).send(getTotalOrders);
-  }
-  catch (error) {
-    console.log(error)
+  } catch (error) {
+    console.log(error);
     res.send('Something went wrong').status(500);
   }
-}
+};
 const getOrderByEmployeeId = async (req, res) => {
-  console.log(req.query.employeeId)
-  const employeeId = req.query.employeeId
+  console.log(req.query.employeeId);
+  const employeeId = req.query.employeeId;
   try {
-    const getOrderByEmployeeId = await Orders.find({ employeeId: employeeId });
+    const getOrderByEmployeeId = await Orders.find({ employeeId });
     if (!getOrderByEmployeeId) {
       res.status(400).send({ message: 'ID not found' });
     } else {
       res.send(getOrderByEmployeeId);
     }
-  }
-  catch (error) {
-    console.log(error)
+  } catch (error) {
+    console.log(error);
     res.send('Something went wrong').status(500);
   }
-}
+};
 
 const getOrderByCompanyId = async (req, res) => {
   const companyId = req.query.companyId;
-  console.log(companyId)
+  console.log(companyId);
   try {
     const getEmployeeByCompanyId = await Company.aggregate(
       [
         {
-          '$match': {
-            '_id': new ObjectId(companyId)
+          $match: {
+            _id: new ObjectId(companyId)
           }
         }, {
-          '$lookup': {
-            'from': 'oders',
-            'localField': '_id',
-            'foreignField': 'companyId',
-            'as': 'orders'
+          $lookup: {
+            from: 'oders',
+            localField: '_id',
+            foreignField: 'companyId',
+            as: 'orders'
           }
         }, {
-          '$lookup': {
-            'from': 'employees',
-            'localField': '_id',
-            'foreignField': 'companyId',
-            'as': 'employees'
+          $lookup: {
+            from: 'employees',
+            localField: '_id',
+            foreignField: 'companyId',
+            as: 'employees'
           }
         }, {
-          '$project': {
+          $project: {
             'employees.employeePassword': 0,
             'employees.companyName': 0,
             'employees.productsId': 0,
@@ -168,18 +165,17 @@ const getOrderByCompanyId = async (req, res) => {
           }
         }
       ]
-    )
+    );
     res.status(200).send(getEmployeeByCompanyId);
-  }
-  catch (error) {
-    console.log(error)
+  } catch (error) {
+    console.log(error);
     res.send('Something went wrong').status(500);
   }
-}
+};
 module.exports = {
   getOrderByCompanyId,
   getOrders,
   totalOrder,
   addOrders,
   getOrderByEmployeeId
-}
+};

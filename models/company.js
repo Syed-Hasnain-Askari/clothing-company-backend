@@ -1,11 +1,10 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Modal = mongoose.model;
 const company = new mongoose.Schema({
   companyName: { type: String },
   companyEmail: { type: String },
   companyPhone: { type: String },
   companyFax: { type: String },
-  companyLogo: { type: String },
-  // employees: [{ type: Schema.Types.ObjectId, ref: 'employee' }],
+  companyLogo: { type: String }
 });
-module.exports = new mongoose.model('company', company);
+module.exports = new Modal('company', company);

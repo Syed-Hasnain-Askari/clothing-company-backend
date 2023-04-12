@@ -1,19 +1,20 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var employeeProducts = new mongoose.Schema({
-      products: {
-        type: [{
-          productName: String,
-          productSize: String,
-          productImage: String,
-          productPrice: Number,
-          productQuantity:Number
-        }],
-        required: true
-      },
-      companyId: {
-        type: Schema.Types.ObjectId,
-        ref: 'company'
-      },
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const Modal = mongoose.model;
+const employeeProducts = new mongoose.Schema({
+  products: {
+    type: [{
+      productName: String,
+      productSize: String,
+      productImage: String,
+      productPrice: Number,
+      productQuantity: Number
+    }],
+    required: true
+  },
+  companyId: {
+    type: Schema.Types.ObjectId,
+    ref: 'company'
+  }
 });
-module.exports = new mongoose.model('employeeProducts', employeeProducts);
+module.exports = new Modal('employeeProducts', employeeProducts);

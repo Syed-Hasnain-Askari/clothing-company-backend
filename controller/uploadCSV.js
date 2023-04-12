@@ -1,45 +1,41 @@
-var csv = require("csvtojson");
+const csv = require('csvtojson');
 const csvFilePath = `${__dirname}/../uploads/usernamefile.csv`;
-const employeeProducts = require("../models/employeeProducts");
-const companyProductsCollection = require("../models/companyProducts");
-const employee = require("../models/employee");
-const multer = require("multer");
-const company = require("../models/company");
-const manager = require("../models/manager");
-const { writeFile } = require("../global-functions/GlobalFunctions");
-const { parse } = require("uuid");
+const employeeProducts = require('../models/employeeProducts');
+const CompanyProductsCollection = require('../models/companyProducts');
+const Employee = require('../models/employee');
+const Company = require('../models/company');
+const Manager = require('../models/manager');
 
-
-//for Auto-generated password
-function generatePassword() {
+// for Auto-generated password
+function generatePassword () {
   const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const length = Math.floor(Math.random() * 5) + 8; // Random length between 8 and 12
-  let password = "";
+  let password = '';
   for (let i = 0; i < length; i++) {
     const randomIndex = Math.floor(Math.random() * chars.length);
     password += chars.charAt(randomIndex);
   }
   return password;
 }
-const productFormatConvertor= (jsonObj)=>{
+const productFormatConvertor = (jsonObj) => {
   // console.log("sss", jsonObj[0].companyProducts)
-   const productsArray = jsonObj[0].companyProducts
-  .split(",")
-  .map((productString) => {
-    const [productName, productSize, productImage, Price] = productString
-      .trim()
-      .split(" ");
-    const productPrice = parseInt(Price);
-    return {
-      productName,
-      productSize,
-      productImage,
-      productPrice,
-    };
-  });
-  return productsArray
-}
+  const productsArray = jsonObj[0].companyProducts
+    .split(',')
+    .map((productString) => {
+      const [productName, productSize, productImage, Price] = productString
+        .trim()
+        .split(' ');
+      const productPrice = parseInt(Price);
+      return {
+        productName,
+        productSize,
+        productImage,
+        productPrice
+      };
+    });
+  return productsArray;
+};
 
 const uploadCSV = (req, res) => {
   csv()
@@ -51,56 +47,63 @@ const uploadCSV = (req, res) => {
       const emp = [];
       //  subhan-akram , company create here
       const saveCompanyF = async () => {
-        const newCompany = new company({
+        const newCompany = new Company({
           companyName: jsonObj[0].companyName,
           companyEmail: jsonObj[0].companyEmail,
           companyPhone: jsonObj[0].companyPhone,
           companyFax: jsonObj[0].companyFax,
-          companyLogo: jsonObj[0].companyLogo,
+          companyLogo: jsonObj[0].companyLogo
         });
 
-        let savedCompany = await newCompany.save();
+        const savedCompany = await newCompany.save();
         return savedCompany;
       };
       const savedCompany = await saveCompanyF();
-      
-     //for create a collection of company products
+
+      // for create a collection of company products
       const companyProducts = async (jsonObj) => {
         // console.log("json>>>>",jsonObj)
-       let productsArray= await productFormatConvertor(jsonObj);
-       console.log(productsArray)
-        const companyProductsCollectionArray = new  companyProductsCollection({
+        const productsArray = await productFormatConvertor(jsonObj);
+        console.log(productsArray);
+        const companyProductsCollectionArray = new CompanyProductsCollection({
           companyId: savedCompany._id,
-          products: productsArray,
+          products: productsArray
         });
         await companyProductsCollectionArray.save();
       };
       companyProducts(jsonObj);
       const companyManager = async (i) => {
         if (
-          jsonObj[i].managerName != undefined &&
-          jsonObj[i].managerEmail != undefined
+          jsonObj[i].managerName !== undefined &&
+          jsonObj[i].managerEmail !== undefined
         ) {
-          const newManager = new manager({
+          const newManager = new Manager({
             name: jsonObj[i]?.managerName,
             managerEmail: jsonObj[i]?.managerEmail,
-            managerPassword: jsonObj[i]?.managerName + "123",
-            company: savedCompany._id,
+            managerPassword: jsonObj[i]?.managerName + '123',
+            company: savedCompany._id
           });
 
-          let savedManager = await newManager.save();
+          const savedManager = await newManager.save();
           return savedManager;
         }
       };
       for (let i = 0; i < jsonObj.length; i++) {
         companyManager(i);
       }
-      for (var i = 0; i < jsonObj.length; i++) {
-        const productsArray = jsonObj[i]['products'].split(',').map(productString => {
-          const [productName, productSize, productImage, Price,Quantity] = productString.trim().split(' ');
-          const productPrice  = parseInt(Price)
-          const productQuantity  = parseInt(Quantity)
-          return{
+      for (let i = 0; i < jsonObj.length; i++) {
+        const productsArray = jsonObj[i].products.split(',').map(productString => {
+          const [
+            productName,
+            productSize,
+            productImage,
+            Price,
+            Quantity
+          ] =
+            productString.trim().split(' ');
+          const productPrice = parseInt(Price);
+          const productQuantity = parseInt(Quantity);
+          return {
             productName,
             productSize,
             productImage,
@@ -110,7 +113,7 @@ const uploadCSV = (req, res) => {
         });
         products.push({
           products: productsArray,
-          companyId:savedCompany._id
+          companyId: savedCompany._id
         });
       }
       // Insert data into employeeProducts collection
@@ -119,11 +122,11 @@ const uploadCSV = (req, res) => {
         .then(function (insertedProducts) {
           insertedProducts.forEach(function (product, i) {
             const empForProduct = [];
-            var obj = {};
-            obj.employeeName = jsonObj[i]["employeeName"];
-            obj.employeeEmail = jsonObj[i]["employeeEmail"];
-            obj.gender = jsonObj[i]["gender"];
-            obj.budget = jsonObj[i]["budget"];
+            const obj = {};
+            obj.employeeName = jsonObj[i].employeeName;
+            obj.employeeEmail = jsonObj[i].employeeEmail;
+            obj.gender = jsonObj[i].gender;
+            obj.budget = jsonObj[i].budget;
             obj.companyName = savedCompany.companyName;
             obj.companyId = savedCompany.id;
 
@@ -136,21 +139,21 @@ const uploadCSV = (req, res) => {
               gender: obj.gender,
               companyName: obj.companyName,
               companyId: obj.companyId,
-              budget: parseInt(obj.budget),
+              budget: parseInt(obj.budget)
             });
 
             //  console.log(empForProduct,"employees")
-            //this section will be resolved
+            // this section will be resolved
             // Subhan-Work , I have removed above forloop ,that was the issue in creating
 
             emp.push(...empForProduct);
             // console.log("emp>>", emp);
           });
-          //get employe email to find already existed users
+          // get employe email to find already existed users
 
           const employeeEmails = emp.map((emp) => emp.employeeEmail);
-          //to find email of users
-          employee
+          // to find email of users
+          Employee
             .find({ employeeEmail: { $in: employeeEmails } })
             .then(function (existingEmployees) {
               const existingEmails = existingEmployees.map(
@@ -159,46 +162,46 @@ const uploadCSV = (req, res) => {
               const newEmployees = emp.filter(
                 (emp) => !existingEmails.includes(emp.employeeEmail)
               );
-              employee
+              Employee
                 .insertMany(newEmployees)
                 .then(function () {
                   res.status(200).send({
-                    message: "Successfully Uploaded!",
+                    message: 'Successfully Uploaded!'
                   });
                 })
                 .catch(function (error) {
                   res.status(500).send({
                     message:
-                      "Error uploading user data to employee collection:",
-                    error,
+                      'Error uploading user data to employee collection:',
+                    error
                   });
                 });
             })
             .catch(function (error) {
               res.status(500).send({
                 message:
-                  "Error checking existing employees in employee collection:",
-                error,
+                  'Error checking existing employees in employee collection:',
+                error
               });
             });
         })
         .catch(function (error) {
           res.status(500).send({
             message:
-              "Error uploading product data to employeeProducts collection:",
-            error,
+              'Error uploading product data to employeeProducts collection:',
+            error
           });
         });
     })
     .catch((error) => {
       console.log(error);
       res.status(500).send({
-        message: "failure",
-        error,
+        message: 'failure',
+        error
       });
     });
 };
 
 module.exports = {
-  uploadCSV,
+  uploadCSV
 };

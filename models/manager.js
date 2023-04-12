@@ -1,20 +1,20 @@
-var mongoose = require("mongoose");
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 const manager = new mongoose.Schema({
   name: { type: String, required: true },
   managerPassword: {
     type: String,
-    required: true,
+    required: true
   },
 
   managerEmail: {
     type: String,
-    required: true,
+    required: true
   },
   company: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Company",
-    required: true,
-  },
+    ref: 'Company',
+    required: true
+  }
 });
-module.exports = new mongoose.model("manager", manager);
+// eslint-disable-next-line new-cap
+module.exports = new mongoose.model('manager', manager);

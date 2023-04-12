@@ -5,7 +5,10 @@
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "prettier --write \"**/*.+(js|jsx|json|css)\""
   },
   "author": "",
   "license": "ISC",
@@ -29,5 +32,12 @@
     "nodemon": "^2.0.22",
     "uuid": "^9.0.0"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "eslint": "^8.38.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.7.0",
+    "eslint-plugin-promise": "^6.1.1"
+  }
 }

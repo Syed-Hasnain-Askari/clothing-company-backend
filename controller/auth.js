@@ -1,81 +1,121 @@
-const employee = require("../models/employee")
-const manager = require("../models/manager")
-const jwt = require("jsonwebtoken");
+const Employee = require('../models/employee');
+const Manager = require('../models/manager');
+const Admin = require('../models/admin');
+const jwt = require('jsonwebtoken');
 const employeeLogin = async (req, res) => {
-    try {
-        const {employeeEmail,employeePassword} = req.body;
-        if (!employeeEmail || !employeePassword) {
-            return res
-                .status(422)
-                .send({error: 'You must provide email and password.'});
-        }
-        const result = await employee.findOne({ employeeEmail:employeeEmail });
-        if(!result){
-          return res.status(401).send({
-            message:"Invalid username or password"
-          })
-        }
-        if (result) {
-            const password = await employee.findOne({ employeePassword:employeePassword });
-            if (password) {
-                var token = jwt.sign({ result: result }, "ClothingCompany", {
-                  expiresIn: "30d",
-                });
-                const resultRes = {
-                  message: "Login Successfull",
-                  token: token,
-                  employeeEmail:result
-                };
-                res.status(200).send(resultRes);
-              } else {
-                res.status(401).send({
-                    message:"Invalid username or password"
-                });
-              }
-        }
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Something went wrong");
+  try {
+    const { employeeEmail, employeePassword } = req.body;
+    if (!employeeEmail || !employeePassword) {
+      return res
+        .status(422)
+        .send({ error: 'You must provide email and password.' });
     }
-  };
-  const managerLogin = async (req, res) => {
-    try {
-        const {managerEmail,managerPassword} = req.body;
-        if (!managerEmail || !managerPassword) {
-            return res
-                .status(422)
-                .send({error: 'You must provide email and password.'});
-        }
-        const result = await manager.findOne({ managerEmail:managerEmail });
-        if(!result){
-          return res.status(401).send({
-            message:"Invalid username or password"
-          })
-        }
-        if (result) {
-            const password = await manager.findOne({ managerPassword:managerPassword });
-            if (password) {
-                var token = jwt.sign({ result: result }, "ClothingCompany", {
-                  expiresIn: "30d",
-                });
-                const resultRes = {
-                  message: "Login Successfull",
-                  token: token,
-                  result:result
-                };
-                res.status(200).send(resultRes);
-              } else {
-                res.status(401).send({
-                    message:"Invalid username or password"
-                });
-              }
-        }
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Something went wrong");
+    const result = await Employee.findOne({ employeeEmail });
+    if (!result) {
+      return res.status(401).send({
+        message: 'Invalid email or password'
+      });
     }
-  };
-  module.exports = {
-    employeeLogin,
-    managerLogin
+    if (result) {
+      const password = await Employee.findOne({ employeePassword });
+      if (password) {
+        const token = jwt.sign({ result }, 'ClothingCompany', {
+          expiresIn: '30d'
+        });
+        const resultRes = {
+          message: 'Login Successfull',
+          token,
+          employeeEmail: result
+        };
+        res.status(200).send(resultRes);
+      } else {
+        res.status(401).send({
+          message: 'Invalid email or password'
+        });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Something went wrong');
   }
+};
+const managerLogin = async (req, res) => {
+  try {
+    const { managerEmail, managerPassword } = req.body;
+    if (!managerEmail || !managerPassword) {
+      return res
+        .status(422)
+        .send({ error: 'You must provide email and password.' });
+    }
+    const result = await Manager.findOne({ managerEmail });
+    if (!result) {
+      return res.status(401).send({
+        message: 'Invalid email or password'
+      });
+    }
+    if (result) {
+      const password = await Manager.findOne({ managerPassword });
+      if (password) {
+        const token = jwt.sign({ result }, 'ClothingCompany', {
+          expiresIn: '30d'
+        });
+        const resultRes = {
+          message: 'Login Successfull',
+          token,
+          result
+        };
+        res.status(200).send(resultRes);
+      } else {
+        res.status(401).send({
+          message: 'Invalid email or password'
+        });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Something went wrong');
+  }
+};
+const adminLogin = async (req, res) => {
+  console.log(req.body);
+  try {
+    const { adminEmail, adminPassword } = req.body;
+    if (!adminEmail || !adminPassword) {
+      return res
+        .status(422)
+        .send({ error: 'You must provide email and password.' });
+    }
+    const result = await Admin.findOne({ adminEmail });
+    if (!result) {
+      return res.status(401).send({
+        message: 'Invalid email or password'
+      });
+    }
+    if (result) {
+      const password = await Admin.findOne({ adminPassword });
+      if (password) {
+        const token = jwt.sign({ result }, 'ClothingCompany', {
+          expiresIn: '30d'
+        });
+        const resultRes = {
+          message: 'Login Successfull',
+          token,
+          result
+        };
+        res.status(200).send(resultRes);
+      } else {
+        res.status(401).send({
+          message: 'Invalid email or password'
+        });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Something went wrong');
+  }
+};
+module.exports = {
+  employeeLogin,
+  managerLogin,
+  adminLogin
+};
