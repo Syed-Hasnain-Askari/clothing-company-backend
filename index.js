@@ -6,12 +6,12 @@ const cors = require('cors');
 const http = require('http');
 const dotenv = require('dotenv');
 dotenv.config();
-// const Config = require('./configuration/config');
+const Config = require('./configuration/config');
 const port = 3977;
 // mongodb://0.0.0.0:27017/clothingcompany
 // useNewUrlParser: true, useUnifiedTopology: true
-// const DB = Config.mongo.uri;
-mongoose.connect('mongodb://0.0.0.0:27017/clothingcompany').then(() => {
+const DB = Config.mongo.uri;
+mongoose.connect(DB, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
   console.log('connection successfully !');
   app.use(bodyParser.json());
   // Enable CORS policy
