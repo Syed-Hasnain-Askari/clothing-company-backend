@@ -81,7 +81,7 @@ const uploadCSV = (req, res) => {
             name: jsonObj[i]?.managerName,
             managerEmail: jsonObj[i]?.managerEmail,
             managerPassword: jsonObj[i]?.managerName + '123',
-            company: savedCompany._id
+            companyId: savedCompany._id
           });
 
           const savedManager = await newManager.save();
