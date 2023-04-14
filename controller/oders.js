@@ -17,7 +17,12 @@ const addOrders = async (req, res) => {
         break;
       }
       // eslint-disable-next-line max-len
-      const destructuredProducts = orderData.products.map(({ productName, productSize, productImage, productPrice }) => ({ productName, productSize, productImage, productPrice }));
+      const destructuredProducts = orderData.products.map(({ productName, productSize, productImage, productPrice }) => ({
+        productName,
+        productSize,
+        productImage,
+        productPrice,
+      }));
       const orderObj = new Orders({
         employeeId,
         companyId: orderData.companyId,
@@ -25,68 +30,58 @@ const addOrders = async (req, res) => {
         companyName: orderData.companyName,
         bill: orderData.bill,
         quantity: orderData.quantity,
-        comment: orderData.comment
+        comment: orderData.comment,
       });
       orders.push(orderObj);
     }
     if (!isValidOrder) {
       return res.status(400).send({
-        message: 'Invalid order - employee budget is insufficient'
+        message: 'Invalid order - employee budget is insufficient',
       });
     }
     const newOrders = await Orders.insertMany(orders);
     // Update the budget value for all employees with matching IDs
     for (const order of newOrders) {
       const { employeeId, bill } = order;
-      await Employee.findOneAndUpdate(
-        { _id: employeeId },
-        { $inc: { budget: -bill } }
-      );
+      await Employee.findOneAndUpdate({ _id: employeeId }, { $inc: { budget: -bill } });
     }
     // Empty products array in employeeProducts collection
     for (const orderData of ordersArray) {
       const { id } = orderData;
-      await employeeProducts.findOneAndUpdate(
-        { _id: id },
-        { $set: { products: [] } }
-      );
+      await employeeProducts.findOneAndUpdate({ _id: id }, { $set: { products: [] } });
     }
     res.status(200).send({
       result: newOrders,
-      message: 'Orders have been created successfully!'
+      message: 'Orders have been created successfully!',
     });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       message: 'Something went wrong!',
-      error
+      error,
     });
   }
 };
 
 const getOrders = async (req, res) => {
   try {
-    const getOrders = await Orders.aggregate(
-      [
-        {
-          $lookup: {
-            from: 'employees',
-            localField: 'employeeId',
-            foreignField: '_id',
-            as: 'result'
-          }
-        }, {
-          $project: {
-            'result.employeePassword': 0,
-            'result.companyName': 0,
-            'result.productsId': 0
-          }
+    const getOrders = await Orders.aggregate([
+      {
+        $lookup: {
+          from: 'employees',
+          localField: 'employeeId',
+          foreignField: '_id',
+          as: 'result',
         },
-        {
-          $count: 'totalOrder'
-        }
-      ]
-    );
+      },
+      {
+        $project: {
+          'result.employeePassword': 0,
+          'result.companyName': 0,
+          'result.productsId': 0,
+        },
+      },
+    ]);
     res.status(200).send(getOrders);
   } catch (error) {
     console.log(error);
@@ -103,20 +98,20 @@ const totalOrder = async (req, res) => {
           from: 'employees',
           localField: 'employeeId',
           foreignField: '_id',
-          as: 'result'
-        }
+          as: 'result',
+        },
       },
       {
-        $count: 'totalOrder'
-      }
+        $count: 'totalOrder',
+      },
     ];
 
     if (companyId) {
       pipeline = [
         {
-          $match: { companyId: new ObjectId(companyId) }
+          $match: { companyId: new ObjectId(companyId) },
         },
-        ...pipeline
+        ...pipeline,
       ];
     }
 
@@ -148,36 +143,37 @@ const getOrderByCompanyId = async (req, res) => {
   const companyId = req.query.companyId;
   console.log(companyId);
   try {
-    const getEmployeeByCompanyId = await Company.aggregate(
-      [
-        {
-          $match: {
-            _id: new ObjectId(companyId)
-          }
-        }, {
-          $lookup: {
-            from: 'oders',
-            localField: '_id',
-            foreignField: 'companyId',
-            as: 'orders'
-          }
-        }, {
-          $lookup: {
-            from: 'employees',
-            localField: '_id',
-            foreignField: 'companyId',
-            as: 'employees'
-          }
-        }, {
-          $project: {
-            'employees.employeePassword': 0,
-            'employees.companyName': 0,
-            'employees.productsId': 0,
-            'employees.companyId': 0
-          }
-        }
-      ]
-    );
+    const getEmployeeByCompanyId = await Company.aggregate([
+      {
+        $match: {
+          _id: new ObjectId(companyId),
+        },
+      },
+      {
+        $lookup: {
+          from: 'oders',
+          localField: '_id',
+          foreignField: 'companyId',
+          as: 'orders',
+        },
+      },
+      {
+        $lookup: {
+          from: 'employees',
+          localField: '_id',
+          foreignField: 'companyId',
+          as: 'employees',
+        },
+      },
+      {
+        $project: {
+          'employees.employeePassword': 0,
+          'employees.companyName': 0,
+          'employees.productsId': 0,
+          'employees.companyId': 0,
+        },
+      },
+    ]);
     res.status(200).send(getEmployeeByCompanyId);
   } catch (error) {
     console.log(error);
@@ -189,5 +185,5 @@ module.exports = {
   getOrders,
   totalOrder,
   addOrders,
-  getOrderByEmployeeId
+  getOrderByEmployeeId,
 };
