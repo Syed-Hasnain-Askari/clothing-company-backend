@@ -25,7 +25,8 @@ const employeeLogin = async (req, res) => {
         const resultRes = {
           message: 'Login Successfull',
           token,
-          employeeEmail: result
+          result: result,
+          name:result.employeeName
         };
         res.status(200).send(resultRes);
       } else {
@@ -62,7 +63,8 @@ const managerLogin = async (req, res) => {
         const resultRes = {
           message: 'Login Successfull',
           token,
-          result
+          result,
+          name:result.name
         };
         res.status(200).send(resultRes);
       } else {
@@ -100,7 +102,8 @@ const adminLogin = async (req, res) => {
         const resultRes = {
           message: 'Login Successfull',
           token,
-          result
+          result,
+          name:result.adminName
         };
         res.status(200).send(resultRes);
       } else {
