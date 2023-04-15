@@ -5,9 +5,11 @@ const cors = require('cors');
 const morgan = require('morgan');
 
 const app = express();
-app.use(cors({
-  origin: '*'
-}));
+app.use(
+  cors({
+    origin: '*',
+  }),
+);
 // Routes
 
 // for auth
@@ -44,8 +46,11 @@ const getTotalEmployee = require('./routes/employee');
 // for get companyDetails
 const getCompanyDetails = require('./routes/company');
 
-// for add products  :
+// for add products
 const rough = require('./routes/rough');
+
+// for get manager
+const getManagers = require('./routes/manager');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -60,7 +65,7 @@ app.use((req, res, next) => {
     'X-Requested-With',
     'Content-Type',
     'Accept',
-    'Access-Control-Allow-Request-Method'
+    'Access-Control-Allow-Request-Method',
   );
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
   res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
@@ -103,5 +108,8 @@ app.use('/api/company/', getCompanyDetails);
 // for add products in order array
 app.use('/api/employee/', rough);
 app.use('/api/employee/', getTotalEmployee);
+
+// for get mananger
+app.use('/api/manager/', getManagers);
 
 module.exports = app;
