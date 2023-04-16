@@ -39,9 +39,9 @@ const productFormatConvertor = (jsonObj) => {
 };
 
 const uploadCSV = (req, res) => {
-  console.log(">>>>>>>>>>", req?.file?.path);
+  
   csv()
-    .fromFile(csvFilePath)
+    .fromFile(req?.file?.path)
     .then(async (jsonObj) => {
       // Create an array to hold products data
       const products = [];

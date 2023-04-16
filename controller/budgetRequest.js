@@ -1,5 +1,7 @@
+const { sendEmail } = require('../global-functions/GlobalFunctions');
 const BudgetRequest = require('../models/budgetRequest');
 const employee = require('../models/employee');
+const managers=require("../models/manager")
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const getBudgetRequest = async (req, res) => {
@@ -28,11 +30,12 @@ const getBudgetRequest = async (req, res) => {
 };
 const addRequest = async (req, res) => {
   // Access values in req.body
-  const { employeeId, requestAmount } = req.body;
+  const { employeeId, requestAmount,companyId} = req.body;
   try {
     BudgetRequest.find({
       employeeId: { $in: employeeId },
     }).then(async (existingEmployees) => {
+     
       if (existingEmployees.length > 0) {
         return res.status(400).send({
           message: 'Sorry! You have already sent your budget request',
@@ -45,6 +48,14 @@ const addRequest = async (req, res) => {
           status: 0,
         });
         const requestCreated = await newRequest.save();
+       const Managers=await managers.find({ companyId }).exec();
+       let mailOptions = {
+        from: "subhan.akram2400@gmail.com",
+        to: Managers[0].managerEmail,
+        subject: `Budget Increase Request`,
+        text:`Employee Has Requested for budget Increased`,
+      };
+       sendEmail(mailOptions)  
         res.status(200).send({
           result: requestCreated,
           message: 'Request has been created successfully!',
@@ -63,8 +74,10 @@ const approvedRequest = async (req, res) => {
   // Access values in req.body
   const { employeeId, approvedAmount, status, requestId } = req.body;
   try {
+    const employees=await employee.findById(employeeId).exec();
     if (status === 2) {
       const removedRequest = await BudgetRequest.findByIdAndRemove(requestId);
+     
       return res.status(401).json({
         message: 'Your request has been rejected',
         removedRequest,
@@ -77,6 +90,13 @@ const approvedRequest = async (req, res) => {
         { new: true },
       );
       // Update the budget value from employeeProducts collection
+      let mailOptions = {
+        from: "subhan.akram2400@gmail.com",
+        to: employees.employeeEmail,
+        subject: `Budget Request ${status==2?"Reject":"Approved"}`,
+        text:`Your Budget Request is ${status==2?"accepted":"rejected"}`,
+      };
+       sendEmail(mailOptions)  
       const updatedBudget = await employee.findOneAndUpdate(
         { _id: employeeId },
         { $inc: { budget: approvedAmount } },
