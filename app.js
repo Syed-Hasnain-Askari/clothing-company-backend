@@ -42,6 +42,7 @@ const changeBudgetByManager = require('./routes/request');
 // for get employees
 const getEmployeeByCompanyId = require('./routes/employee');
 const getTotalEmployee = require('./routes/employee');
+const getEmployee = require('./routes/employee');
 
 // for get companyDetails
 const getCompanyDetails = require('./routes/company');
@@ -51,6 +52,8 @@ const rough = require('./routes/rough');
 
 // for get manager
 const getManagers = require('./routes/manager');
+const getAllManagers = require('./routes/manager');
+const getTotalManager = require('./routes/manager');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -102,14 +105,17 @@ app.use('/api/request/', changeBudgetByManager);
 
 // for get employees
 app.use('/api/employee/', getEmployeeByCompanyId);
+app.use('/api/employee/', getEmployee);
+app.use('/api/employee/', getTotalEmployee);
 // for get companyDetails
 app.use('/api/company/', getCompanyDetails);
 
 // for add products in order array
 app.use('/api/employee/', rough);
-app.use('/api/employee/', getTotalEmployee);
 
 // for get mananger
 app.use('/api/manager/', getManagers);
+app.use('/api/manager/', getAllManagers);
+app.use('/api/manager/', getTotalManager);
 
 module.exports = app;
