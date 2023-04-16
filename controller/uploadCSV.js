@@ -1,17 +1,18 @@
-const csv = require('csvtojson');
+const csv = require("csvtojson");
 const csvFilePath = `${__dirname}/../uploads/usernamefile.csv`;
-const employeeProducts = require('../models/employeeProducts');
-const CompanyProductsCollection = require('../models/companyProducts');
-const Employee = require('../models/employee');
-const Company = require('../models/company');
-const Manager = require('../models/manager');
+const employeeProducts = require("../models/employeeProducts");
+const CompanyProductsCollection = require("../models/companyProducts");
+const Employee = require("../models/employee");
+const Company = require("../models/company");
+const Manager = require("../models/manager");
+const { sendEmail } = require("../global-functions/GlobalFunctions");
 
 // for Auto-generated password
-function generatePassword () {
+function generatePassword() {
   const chars =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const length = Math.floor(Math.random() * 5) + 8; // Random length between 8 and 12
-  let password = '';
+  let password = "";
   for (let i = 0; i < length; i++) {
     const randomIndex = Math.floor(Math.random() * chars.length);
     password += chars.charAt(randomIndex);
@@ -21,23 +22,24 @@ function generatePassword () {
 const productFormatConvertor = (jsonObj) => {
   // console.log("sss", jsonObj[0].companyProducts)
   const productsArray = jsonObj[0].companyProducts
-    .split(',')
+    .split(",")
     .map((productString) => {
       const [productName, productSize, productImage, Price] = productString
         .trim()
-        .split(' ');
+        .split(" ");
       const productPrice = parseInt(Price);
       return {
         productName,
         productSize,
         productImage,
-        productPrice
+        productPrice,
       };
     });
   return productsArray;
 };
 
 const uploadCSV = (req, res) => {
+  console.log(">>>>>>>>>>", req?.file?.path);
   csv()
     .fromFile(csvFilePath)
     .then(async (jsonObj) => {
@@ -52,7 +54,7 @@ const uploadCSV = (req, res) => {
           companyEmail: jsonObj[0].companyEmail,
           companyPhone: jsonObj[0].companyPhone,
           companyFax: jsonObj[0].companyFax,
-          companyLogo: jsonObj[0].companyLogo
+          companyLogo: jsonObj[0].companyLogo,
         });
 
         const savedCompany = await newCompany.save();
@@ -64,10 +66,9 @@ const uploadCSV = (req, res) => {
       const companyProducts = async (jsonObj) => {
         // console.log("json>>>>",jsonObj)
         const productsArray = await productFormatConvertor(jsonObj);
-        console.log(productsArray);
         const companyProductsCollectionArray = new CompanyProductsCollection({
           companyId: savedCompany._id,
-          products: productsArray
+          products: productsArray,
         });
         await companyProductsCollectionArray.save();
       };
@@ -80,40 +81,43 @@ const uploadCSV = (req, res) => {
           const newManager = new Manager({
             name: jsonObj[i]?.managerName,
             managerEmail: jsonObj[i]?.managerEmail,
-            managerPassword: jsonObj[i]?.managerName + '123',
-            companyId: savedCompany._id
+            managerPassword: jsonObj[i]?.managerName + "123",
+            companyId: savedCompany._id,
           });
 
           const savedManager = await newManager.save();
+          let mailOptions = {
+            from: "subhan.akram2400@gmail.com",
+            to: jsonObj[i].managerEmail,
+            subject: `Hello ${jsonObj[i]?.managerName} ,Your Credentials`,
+            text:`Email : ${jsonObj[i]?.managerEmail} , Password : ${jsonObj[i]?.managerName+"123"} }`,
+          };
+          sendEmail(mailOptions);
           return savedManager;
         }
       };
-      for (let i = 0; i < jsonObj.length; i++) {
+      for (let i = 0; i < 1; i++) {
         companyManager(i);
       }
       for (let i = 0; i < jsonObj.length; i++) {
-        const productsArray = jsonObj[i].products.split(',').map(productString => {
-          const [
-            productName,
-            productSize,
-            productImage,
-            Price,
-            Quantity
-          ] =
-            productString.trim().split(' ');
-          const productPrice = parseInt(Price);
-          const productQuantity = parseInt(Quantity);
-          return {
-            productName,
-            productSize,
-            productImage,
-            productPrice,
-            productQuantity
-          };
-        });
+        const productsArray = jsonObj[i].products
+          .split(",")
+          .map((productString) => {
+            const [productName, productSize, productImage, Price, Quantity] =
+              productString.trim().split(" ");
+            const productPrice = parseInt(Price);
+            const productQuantity = parseInt(Quantity);
+            return {
+              productName,
+              productSize,
+              productImage,
+              productPrice,
+              productQuantity,
+            };
+          });
         products.push({
           products: productsArray,
-          companyId: savedCompany._id
+          companyId: savedCompany._id,
         });
       }
       // Insert data into employeeProducts collection
@@ -139,7 +143,7 @@ const uploadCSV = (req, res) => {
               gender: obj.gender,
               companyName: obj.companyName,
               companyId: obj.companyId,
-              budget: parseInt(obj.budget)
+              budget: parseInt(obj.budget),
             });
 
             //  console.log(empForProduct,"employees")
@@ -153,8 +157,7 @@ const uploadCSV = (req, res) => {
 
           const employeeEmails = emp.map((emp) => emp.employeeEmail);
           // to find email of users
-          Employee
-            .find({ employeeEmail: { $in: employeeEmails } })
+          Employee.find({ employeeEmail: { $in: employeeEmails } })
             .then(function (existingEmployees) {
               const existingEmails = existingEmployees.map(
                 (emp) => emp.employeeEmail
@@ -162,46 +165,56 @@ const uploadCSV = (req, res) => {
               const newEmployees = emp.filter(
                 (emp) => !existingEmails.includes(emp.employeeEmail)
               );
-              Employee
-                .insertMany(newEmployees)
-                .then(function () {
+              let mailOptions ;
+              Employee.insertMany(newEmployees)
+                .then(function (emp) {
+                  console.log("emp",emp)
+                  for(let i=0;i<emp.length;i++){
+                    mailOptions = {
+                      from: "subhan.akram2400@gmail.com",
+                      to: emp[i].employeeEmail,
+                      subject: `Hello ${emp[i]?.employeeName} ,Your Credentials`,
+                      text:`Email : ${emp[i]?.employeeEmail} , Password : ${emp[i].employeePassword}`,
+                    };
+                    sendEmail(mailOptions);
+                  }
                   res.status(200).send({
-                    message: 'Successfully Uploaded!'
+                    message: "Successfully Uploaded!",
                   });
                 })
                 .catch(function (error) {
                   res.status(500).send({
                     message:
-                      'Error uploading user data to employee collection:',
-                    error
+                      "Error uploading user data to employee collection:",
+                    error,
                   });
                 });
             })
             .catch(function (error) {
               res.status(500).send({
                 message:
-                  'Error checking existing employees in employee collection:',
-                error
+                  "Error checking existing employees in employee collection:",
+                error,
               });
             });
         })
         .catch(function (error) {
           res.status(500).send({
             message:
-              'Error uploading product data to employeeProducts collection:',
-            error
+              "Error uploading product data to employeeProducts collection:",
+            error,
           });
         });
     })
     .catch((error) => {
       console.log(error);
       res.status(500).send({
-        message: 'failure',
-        error
+        message: "failure",
+        error,
       });
     });
 };
 
 module.exports = {
-  uploadCSV
+  uploadCSV,
 };

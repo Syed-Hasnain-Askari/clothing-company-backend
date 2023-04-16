@@ -8,6 +8,10 @@ const admin = new mongoose.Schema({
   adminEmail: {
     type: String,
     required: true
+  },
+    name: {
+    type: String,
+    required: true
   }
 });
 module.exports = new Model('admin', admin);

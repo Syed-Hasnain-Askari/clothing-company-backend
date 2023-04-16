@@ -103,7 +103,7 @@ const adminLogin = async (req, res) => {
           message: 'Login Successfull',
           token,
           result,
-          name:result.adminName
+          name:result.name
         };
         res.status(200).send(resultRes);
       } else {
